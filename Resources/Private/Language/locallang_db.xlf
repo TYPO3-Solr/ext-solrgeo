@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2014-02-14T09:30:02Z" product-name="solrgeo">
+		<header/>
+		<body>
+
+			<trans-unit id="tx_solrgeo_domain_model_location">
+				<source>Location</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo_domain_model_location.address">
+				<source>Address</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo_domain_model_location.zip">
+				<source>Zip</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo_domain_model_location.region">
+				<source>Region</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo_domain_model_location.country">
+				<source>Country</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo_domain_model_location.city">
+				<source>City</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo_domain_model_location.geolocation">
+				<source>Geolocation</source>
+			</trans-unit>
+
+		</body>
+	</file>
+</xliff>

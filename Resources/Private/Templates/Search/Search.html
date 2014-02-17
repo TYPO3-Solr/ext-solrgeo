@@ -1,0 +1,18 @@
+<f:layout name="Default" />
+
+<f:section name="main">
+
+	<div id="result-container" class="result-wrapper">
+		<f:for each="{resultDocuments}" as="resultDocument">
+			<div class="result">
+				<h3>{resultDocument.title}</h3>
+				<div class="result-content">
+					<span class="label">{resultDocument.type}, {resultDocument.url}</span><br />
+					{resultDocument.content}
+				</div>
+			</div>
+		</f:for>
+	</div>
+
+
+</f:section>

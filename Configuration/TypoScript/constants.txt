@@ -1,0 +1,14 @@
+plugin.tx_solrgeo {
+	view {
+		# cat=plugin.tx_solrgeo/file; type=string; label=Path to template root (FE)
+		templateRootPath = EXT:solrgeo/Resources/Private/Templates/
+		# cat=plugin.tx_solrgeo/file; type=string; label=Path to template partials (FE)
+		partialRootPath = EXT:solrgeo/Resources/Private/Partials/
+		# cat=plugin.tx_solrgeo/file; type=string; label=Path to template layouts (FE)
+		layoutRootPath = EXT:solrgeo/Resources/Private/Layouts/
+	}
+	persistence {
+		# cat=plugin.tx_solrgeo//a; type=string; label=Default storage PID
+		storagePid =
+	}
+}
