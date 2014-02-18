@@ -21,7 +21,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks']['TYPO3\\Solrgeo\
 
 // Extending the SortingCommand for "Sort By"-Box
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['Tx_Solr_PiResults_SortingCommand'] = array(
-	'className' => 'TYPO3\\Solrgeo\\Hooks\GeoSearchSortingCommand'
+	'className' => 'TYPO3\\Solrgeo\\Search\\GeoSearchSortingCommand'
 );
 /*
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::configurePlugin(
@@ -42,6 +42,14 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['Tx_Solr_PiResults_SortingCommand'
 	'TYPO3.' . $_EXTKEY,
 	'search',
 	array('Search' => 'search'),
-	array()
+	array('Search' => 'search')
 );
+
+
+/*
+Tx_Solr_Search_SearchComponentManager::registerSearchComponent(
+	'geosearch',
+	'TYPO3\\Solrgeo\\Search\\SpartialSearchCommand'
+);
+*/
 ?>

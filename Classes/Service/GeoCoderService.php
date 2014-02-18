@@ -112,8 +112,16 @@ class GeoCoderService extends \Geocoder\Geocoder{
 	 * @return string the latitude and longitude as string, comma separated
 	 */
 	public function getGeolocationFromKeyword($keyword) {
-		$geocode = $this->geocode($keyword);
-		return $geocode->getLatitude().','.$geocode->getLongitude();
+		$geocoded = "";
+		try {
+			$geocode = $this->geocode($keyword);
+			$geocoded = $geocode->getLatitude().','.$geocode->getLongitude();
+		} catch (\Geocoder\Exception\ExceptionInterface $e) {
+			//$geocode = $e->getMessage();
+			$geocoded = "-1";
+		}
+
+		return $geocoded;
 	}
 
 

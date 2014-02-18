@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2014-02-18T09:30:00Z" product-name="solrgeo">
+		<header/>
+		<body>
+			<trans-unit id="tx_solrgeo.searchUnavailable">
+				<source>Search is currently not available.</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo.searchFailed">
+				<source>We're sorry. The request you tried to make could not be processed.</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo.no_results_nothing_found">
+				<source>Nothing found for </source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo.error_emptyQuery">
+            	<source>Please enter your search term in the box above.</source>
+            </trans-unit>
+            <trans-unit id="tx_solrgeo.within">
+				<source> within </source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo.radius">
+				<source>Radius</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo.filter.distance">
+				<source>Distance filter</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo.faceting_removeFilter">
+				<source>Remove filter</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo.search_btn">
+				<source>Search</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

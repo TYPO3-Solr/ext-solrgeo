@@ -1,0 +1,47 @@
+.tx-solrgeo input.tx-solr-q {
+	width: 70%;
+}
+
+.tx-solrgeo .tx-solr-submit {
+	width: 20%;
+}
+
+.tx-solrgeo-search-form {
+	background-color: #F2F2F2;
+	border: 1px solid #CFCECF;
+	margin-bottom: 10px;
+	padding: 10px;
+	height: 25px;
+}
+
+textarea.f3-form-error {
+	background-color:#FF9F9F;
+	border: 1px #FF0000 solid;
+}
+
+input.f3-form-error {
+	background-color:#FF9F9F;
+	border: 1px #FF0000 solid;
+}
+
+.tx-solrgeo table {
+	border-collapse:separate;
+	border-spacing:10px;
+}
+
+.tx-solrgeo table th {
+	font-weight:bold;
+}
+
+.tx-solrgeo table td {
+	vertical-align:top;
+}
+
+
+#tx-solr-search {
+
+}
+
+#result-container {
+	margin-top: 20px;
+}

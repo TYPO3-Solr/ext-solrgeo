@@ -76,6 +76,10 @@ class Helper {
 		return $this->domain;
 	}
 
+	public function getFullDomain() {
+		return 'http://'.$this->domain;
+	}
+
 	private function setConfiguration() {
 		$objectManager =
 			\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');

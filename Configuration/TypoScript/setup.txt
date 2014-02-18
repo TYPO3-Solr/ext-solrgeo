@@ -11,8 +11,13 @@ plugin.tx_solr {
 			}
 		}
 	}
-
 }
+
+page.includeCSS {
+	file1 = EXT:solr/Resources/Css/PiResults/results.css
+	file2 = EXT:solrgeo/Resources/Public/Stylesheets/search.css
+}
+
 
 plugin.tx_solrgeo {
 	view {
@@ -76,41 +81,45 @@ plugin.tx_solrgeo {
 	search {
 		targetPageId = 75
 
-		filter {
+		query {
+			filter {
+				# valid filters: geofilt (The distance filter, exact search) or bbox (Bounding-box filter, less exact search)
+				type = geofilt
 
-			# valid filters: geofilt (The distance filter, exact search) or bbox (Bounding-box filter, less exact search)
-			type = geofilt
+				# default distance to search from given address in kilometers
+				d = 100
+			}
 
-			# default distance to search from given address in kilometers
-			d = 100
+			sort {
+				# asc, desc
+				direction = asc
+			}
 		}
-		sorting {
 
+		faceting = 1
+		faceting {
+			distance {
+				ranges {
+					1 {
+						value = 0-1
+					}
+					2 {
+						value = 1-5
+					}
+					3 {
+						value = 5-50
+					}
+				}
+			}
+
+			city {}
+
+			country {}
 		}
 	}
 }
 
-plugin.tx_solrgeo._CSS_DEFAULT_STYLE (
-	textarea.f3-form-error {
-		background-color:#FF9F9F;
-		border: 1px #FF0000 solid;
-	}
 
-	input.f3-form-error {
-		background-color:#FF9F9F;
-		border: 1px #FF0000 solid;
-	}
-
-	.tx-solrgeo table {
-		border-collapse:separate;
-		border-spacing:10px;
-	}
-
-	.tx-solrgeo table th {
-		font-weight:bold;
-	}
-
-	.tx-solrgeo table td {
-		vertical-align:top;
-	}
-)
+#page.includeJS.solrgeo = EXT:solrgeo/Resources/Public/Javascript/Geocoding.js
+# Include Google Maps API, external
+#<script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>

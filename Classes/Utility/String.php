@@ -42,4 +42,12 @@ class String {
 		return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
 	}
 
+	static public function contains($haystack, $needle) {
+		$contains = false;
+		if (strpos($haystack,$needle) !== false) {
+			$contains = true;
+		}
+		return $contains;
+	}
+
 } 

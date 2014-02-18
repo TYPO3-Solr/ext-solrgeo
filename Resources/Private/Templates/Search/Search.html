@@ -1,18 +1,47 @@
+{namespace solrgeo=TYPO3\Solrgeo\ViewHelpers}
+
 <f:layout name="Default" />
 
 <f:section name="main">
 
-	<div id="result-container" class="result-wrapper">
-		<f:for each="{resultDocuments}" as="resultDocument">
-			<div class="result">
-				<h3>{resultDocument.title}</h3>
-				<div class="result-content">
-					<span class="label">{resultDocument.type}, {resultDocument.url}</span><br />
-					{resultDocument.content}
+	<f:if condition="{resultDocuments -> f:count()} > 0">
+		<f:then>
+
+			<div id="tx-solr-search-functions">
+				<div id="tx-solrgeo-distance">
+					<solrgeo:distanceFilter keyword="{keyword}" defaultDistance="{distance}" distanceFilter="{distanceFilter}"/>
 				</div>
 			</div>
-		</f:for>
-	</div>
+			<div id="tx-solr-search">
 
+				<div class="tx-solrgeo-search-form">
+					<f:form id="tx-solr-search" action="search" controller="Search" class="form-search" enctype="multipart/form-data">
+						<f:form.textfield name="q" value="" class="tx-solr-q" value="{keyword}"  />
+						<f:form.hidden name="L" value="0" />
+						<f:form.submit name="mySubmit" value="<f:translate key=\"LLL:EXT:solrgeo/Resources/Private/Language/locallang_search.xml:tx_solrgeo.search_btn\" />" class="tx-solr-submit" />
+					</f:form>
+				</div>
+
+				<div id="result-container" class="result-wrapper">
+					<f:for each="{resultDocuments}" as="resultDocument">
+						<div class="result">
+							<h3>{resultDocument.title}</h3>
+							<div class="result-content">
+								<span class="label"><strong>{resultDocument.address_textS}<!--, {resultDocument.geo_location}--></strong></span><br />
+								<f:format.crop maxCharacters="200">{resultDocument.content}</f:format.crop>
+							</div>
+						</div>
+					</f:for>
+				</div>
+			</div>
+		</f:then>
+
+		<f:else>
+			<div class="result">
+				<h3><f:translate key="tx_solrgeo.no_results_nothing_found" />"{keyword}".</h3>
+			</div>
+		</f:else>
+
+	</f:if>
 
 </f:section>

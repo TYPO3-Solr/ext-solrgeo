@@ -35,9 +35,9 @@ namespace TYPO3\Solrgeo\Controller;
 class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
-	 * @var \TYPO3\Solrgeo\Controller\SolrController
+	 * @var \TYPO3\Solrgeo\Controller\GeoSearchController
 	 */
-	protected $solr;
+	protected $geoSearchController;
 
 	/**
 	 * @var \TYPO3\Solrgeo\Utility\Helper
@@ -67,23 +67,42 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		foreach($uri as $t) {
 			if(\TYPO3\Solrgeo\Utility\String::startsWith($t,'L=')) {
 				$this->defaultLanguage = str_replace('L=','',$t);
+				if($this->defaultLanguage == '') {
+					$this->defaultLanguage = 0;
+				}
 				break;
 			}
 		}
 
-		if(!$this->solr->getSolrstatus()) {
-			$this->solr->initialize($this->helper->getSolrSite()->getRootPageId(), $this->defaultLanguage);
+		if(!$this->geoSearchController->getSolrstatus()) {
+			$this->geoSearchController->initialize($this->helper->getSolrSite()->getRootPageId(), $this->defaultLanguage);
+		}
+		$distance = '';
+		if($this->request->hasArgument('d')) {
+			$distance = $this->request->getArgument('d');
 		}
 
-		$resultDocuments = $this->solr->searchByKeyword($this->request->getArgument('q'));
+		$range = '';
+		if($this->request->hasArgument('r')) {
+			$range = $this->request->getArgument('r');
+		}
+
+		$keyword = $this->request->getArgument('q');
+		$resultDocuments = $this->geoSearchController->searchByKeyword($keyword, $distance, $range);
+
+		$this->view->assign('keyword',$keyword);
+
+		$this->view->assign('distance',$this->geoSearchController->getDistance());
+		$this->view->assign('distanceFilter',$range);
 		$this->view->assign('resultDocuments',$resultDocuments);
 	}
 
 	protected function initializeSolr() {
 		$this->helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
-		$this->solr = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Controller\\SolrController',
+		$this->geoSearchController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Controller\\GeoSearchController',
 						$this->helper->getSolrSite());
 	}
+
 
 }
 ?>
