@@ -23,15 +23,13 @@
 				</div>
 
 				<div id="result-container" class="result-wrapper">
+					<ol class="results-list">
 					<f:for each="{resultDocuments}" as="resultDocument">
 						<div class="result">
-							<h3>{resultDocument.title}</h3>
-							<div class="result-content">
-								<span class="label"><strong>{resultDocument.address_textS}<!--, {resultDocument.geo_location}--></strong></span><br />
-								<f:format.crop maxCharacters="200">{resultDocument.content}</f:format.crop>
-							</div>
+							<solrgeo:result resultDocument="{resultDocument}" maxLength="200" />
 						</div>
 					</f:for>
+					</ol>
 				</div>
 			</div>
 		</f:then>

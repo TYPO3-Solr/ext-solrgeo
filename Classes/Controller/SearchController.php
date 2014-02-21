@@ -35,7 +35,7 @@ namespace TYPO3\Solrgeo\Controller;
 class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
-	 * @var \TYPO3\Solrgeo\Controller\GeoSearchController
+	 * @var \TYPO3\Solrgeo\Controller\FrontendGeoSearchController
 	 */
 	protected $geoSearchController;
 
@@ -91,7 +91,6 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		$resultDocuments = $this->geoSearchController->searchByKeyword($keyword, $distance, $range);
 
 		$this->view->assign('keyword',$keyword);
-
 		$this->view->assign('distance',$this->geoSearchController->getDistance());
 		$this->view->assign('distanceFilter',$range);
 		$this->view->assign('resultDocuments',$resultDocuments);
@@ -99,7 +98,7 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 
 	protected function initializeSolr() {
 		$this->helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
-		$this->geoSearchController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Controller\\GeoSearchController',
+		$this->geoSearchController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Controller\\FrontendGeoSearchController',
 						$this->helper->getSolrSite());
 	}
 

@@ -32,14 +32,7 @@ namespace TYPO3\Solrgeo\ViewHelpers;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-
 class DistanceFilterViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper{
-
-	protected $configurationManager;
-
-	public function injectConfigurationManager(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface $configurationManager) {
-		$this->configurationManager = $configurationManager;
-	}
 
 	/**
 	 * @param string $keyword
@@ -72,7 +65,11 @@ class DistanceFilterViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 				$markEnd = '</strong>';
 			}
 
-			$distanceFilterBox .= '<ul><li><a href="'.$linkUrl.'">'.$markStart.'Default <br>(0-'.$defaultDistance.' km)'.$markEnd.'</a></li></ul>';
+			$distanceFilterBox .= '<ul>';
+			$distanceFilterBox .= '<li>';
+			$distanceFilterBox .= '<a href="'.$linkUrl.'">'.$markStart.'Default <br>(0-'.$defaultDistance.' km)'.$markEnd.'</a>';
+			$distanceFilterBox .= '</li>';
+			$distanceFilterBox .= '</ul>';
 
 			$distanceFilterBox .= "<ul class='facets'>";
 			foreach($ranges as $range) {
@@ -95,7 +92,6 @@ class DistanceFilterViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\Abstract
 			}
 
 			$distanceFilterBox .= "</div>";
-
 		}
 
 		return $distanceFilterBox;

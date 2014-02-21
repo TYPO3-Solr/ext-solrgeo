@@ -199,55 +199,46 @@ class GeoSearchConfiguration {
 
 	/**
 	 * Save the defined location configured with Typoscript.
-	 * Required values are the uid of a page and the city.
-	 * Example:
-	 * 	location {
-	 * 		1 {
-	 * 			uid = 6, 51
-	 *			city = Frankfurt
-	 *			address = Kaiserstraße 73
-	 * 			zip = 60329
-	 * 			geolocation = 50.1077219, 8.666562
-	 *		}
-	 * 	}
+	 * Required values are the uid of a page/tca-table and the city.
 	 */
 	public function setLocationList() {
-		if(!empty($this->siteConfiguration['index.']['location.'])) {
-			$locationDefiniton = $this->siteConfiguration['index.']['location.'];
+		if(!empty($this->siteConfiguration['index.']['geocode.'])) {
+			$configuredLocations = $this->siteConfiguration['index.']['geocode.'];
 			$locationList = array();
-			foreach ($locationDefiniton as $location) {
-				$uidList = array();
-				$city = "";
-				$address = "";
-				$zip = "";
-				$geolocation = "";
-				foreach ($location as $key => $value) {
-					switch ($key) {
-						case 'uid':
-							$uidList = \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $value);
-							break;
-						case 'city':
-							$city = trim($value);
-							break;
-						case 'address':
-							$address = trim($value);
-							break;
-						case 'zip':
-							$zip = trim($value);
-							break;
-						case 'geolocation':
-							$geolocation = trim($value);
-							break;
-					}
+			foreach ($configuredLocations as $table => $locations) {
+				// per table
+				$table = str_replace(".","",$table);
+				if($table == 'files' || $table == 'file') {
+					$table = 'tx_solr_file';
 				}
-				foreach($uidList as $uid) {
-					$location = array();
-					$location['uid'] = $uid;
-					$location['city'] = $city;
-					$location['zip'] = $zip;
-					$location['address'] = $address;
-					$location['geolocation'] = $geolocation;
-					$locationList[] = $location;
+				foreach ($locations as $location) {
+					if(!isset($location['uid'])) {
+						throw new \BadMethodCallException(
+							'Required field UID in defined table '.$table.' for geocoding-process with Solr is missing',
+							1392978390);
+					}
+					else if(!isset($location['city'])) {
+						throw new \BadMethodCallException(
+							'Required field CITY in defined table '.$table.' for geocoding-process with Solr is missing',
+							1392978390);
+					}
+
+					$uidList 		= \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $location['uid']);
+					$city 			= trim($location['city']);
+					$address 		= (isset($location['address'])) ? trim($location['address']) : '';
+					//$zip 			= (isset($location['zip'])) ? trim($location['zip']) : '';
+					$geolocation 	= (isset($location['geolocation'])) ? trim($location['geolocation']) : '';
+
+					foreach($uidList as $uid) {
+						$tmp = array();
+						$tmp['type'] = $table;
+						$tmp['uid'] = $uid;
+						$tmp['city'] = $city;
+						//$tmp['zip'] = $zip;
+						$tmp['address'] = $address;
+						$tmp['geolocation'] = $geolocation;
+						$locationList[] = $tmp;
+					}
 				}
 			}
 			$this->locationList = $locationList;

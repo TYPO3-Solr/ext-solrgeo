@@ -49,32 +49,60 @@ plugin.tx_solrgeo {
 			useSsl = 0
 		}
 
-		location {
-			# Required fields are uid (pages) and city
-			1 {
-				uid = 3,51
-				city = Frankfurt a.M.
-				address = Kaiserstr. 73
-				geolocation =
+		geocode {
+
+			# Required fields: uid, city
+            # Optional fields: address, geolocation
+
+			pages {
+				1 {
+					uid = 3,51
+					city = Frankfurt a.M.
+					address = Kaiserstr. 73
+				}
+
+				2 {
+					uid = 2
+					city = Berlin
+					geolocation =  52.5234051, 13.4113999
+				}
+
+				3 {
+					uid = 4
+					city = Frankfurt
+					address = Eckenheimer Landstr. 180
+				}
+				4 {
+					uid = 25
+					city = Hanau
+				}
+				5 {
+					uid = 43, 38
+					city = Würzburg
+					address = Keesburgstr. 72
+				}
 			}
 
-			2 {
-				uid = 2
-				city = Berlin
-				geolocation =  52.5234051, 13.4113999
+			# this are the indexed files with EXT:solrfile or EXT:solrfal
+			files {
+				1 {
+					# This is the reference UID in the content element!
+					uid = 110
+					city = Frankfurt a.M.
+					address = Eissporthalle
+				}
 			}
 
-			3 {
-				uid = 4
-				city = Frankfurt
-				address = Eckenheimer Landstr. 180
-				geolocation =
+			# every table with at least the column uid, you configured with EXT:solr
+			tx_news_domain_model_news {
+				1 {
+					uid = 1
+					city = Frankfurt a.M.
+					address = Kaiserstr. 73
+				}
 			}
-			4 {
-				uid = 25
-				city = Hanau
-				geolocation =
-            }
+
+
 		}
 	}
 

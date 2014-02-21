@@ -1,6 +1,37 @@
 <?php
 namespace TYPO3\Solrgeo\Controller;
 
+	/***************************************************************
+	 *  Copyright notice
+	 *
+	 *  (c) 2014 Phuong Doan <phuong.doan@dkd.de>, dkd Internet Service GmbH
+	 *
+	 *  All rights reserved
+	 *
+	 *  This script is part of the TYPO3 project. The TYPO3 project is
+	 *  free software; you can redistribute it and/or modify
+	 *  it under the terms of the GNU General Public License as published by
+	 *  the Free Software Foundation; either version 3 of the License, or
+	 *  (at your option) any later version.
+	 *
+	 *  The GNU General Public License can be found at
+	 *  http://www.gnu.org/copyleft/gpl.html.
+	 *
+	 *  This script is distributed in the hope that it will be useful,
+	 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 *  GNU General Public License for more details.
+	 *
+	 *  This copyright notice MUST APPEAR in all copies of the script!
+	 ***************************************************************/
+
+/**
+ *
+ *
+ * @package solrgeo
+ * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ *
+ */
 class SolrController {
 
 	/**
@@ -62,18 +93,42 @@ class SolrController {
 	 */
 	protected $solrAvailable = false;
 
+	/**
+	 * @var \TYPO3\Solrgeo\Utility\Helper
+	 */
+	protected $helper;
+
+	/**
+	 * @var string
+	 */
+	protected $distance = '5';
+
+	/**
+	 * @var string
+	 */
+	protected $filterType = 'bbox';
+
+	/**
+	 * @var string
+	 */
+	protected $direction = 'asc';
+
+
+
 	public function __construct(\tx_solr_Site $site) {
 		$this->site = $site;
 		$this->connectionManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_solr_ConnectionManager');
 		if(!$this->solrAvailable) {
 			$this->initializeConfiguration();
 		}
+		$this->helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
+		$this->setGeoSearchConfiguration();
 	}
 
 	/**
 	 * Initializes the controller
 	 *
-	 * @param integer	A page ID.
+	 * @param integer A page ID.
 	 * @param integer The language ID to get the configuration for as the path may differ. Optional, defaults to 0.
 	 * @return void
 	 */
@@ -89,7 +144,7 @@ class SolrController {
 	/**
 	 * Initializes the Solr connection and tests the connection through a ping. Also gets all the solr cores.
 	 *
-	 * @param	integer	A page ID.
+	 * @param integer A page ID.
 	 * @param integer The language ID to get the configuration for as the path may differ. Optional, defaults to 0.
 	 * @return void
 	 */
@@ -108,29 +163,6 @@ class SolrController {
 
 
 	/**
-	 * Search for Solr Document by given UID of page
-	 *
-	 * @param The uid of a page
-	 * @return \Apache_Solr_Document
-	 */
-	public function search($uid) {
-		$solrDocument = null;
-		if ($this->solrAvailable) {
-			$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_solr_Query', '');
-			$query->setAlternativeQuery('*:*');
-			$query->addFilter('(type:pages AND uid:' . $uid. ')');
-			$this->query = $query;
-			$this->search->search($this->query, 0, NULL);
-			$solrResults = $this->search->getResultDocuments();
-
-			if(count($solrResults) == 1) {
-				$solrDocument = $solrResults[0];
-			}
-		}
-		return $solrDocument;
-	}
-
-	/**
 	 * Checks whether Solr Document has the given field
 	 *
 	 * @param \Apache_Solr_Document The Solr Document for checking
@@ -138,68 +170,25 @@ class SolrController {
 	 * @return boolean
 	 */
 	public function solrDocumentHasFieldByName(\Apache_Solr_Document $solrDocument, $fieldName) {
-		$hasGeolocationField = false;
+		$hasField = false;
 		$fields   = $solrDocument->getFieldNames();
 
 		foreach ($fields as $field) {
 			if($field == $fieldName) {
-				$hasGeolocationField = true;
+				$hasField = true;
 				break;
 			}
 		}
-		return $hasGeolocationField;
+		return $hasField;
 	}
+
 
 	/**
-	 * Update the Solr Document with the address and location values
+	 * Dumps the Solr Document for debugging
 	 *
-	 * @param integer The UID of the page
-	 * @param \TYPO3\Solrgeo\Domain\Model\Location The Search Object holds the information about address and Geolocation
-	 * @return boolean Returns the Status of Update
+	 * @param \Apache_Solr_Document
+	 * @return void
 	 */
-	public function updateSolrDocument($uid, \TYPO3\Solrgeo\Domain\Model\Location $locationObject) {
-
-		$updateSolrDocument = true;
-		$address = ($locationObject->getAddress() != "") ?
-			$locationObject->getAddress().", ".$locationObject->getCity() : $locationObject->getCity();
-
-		$solrConnections = $this->connectionManager->getAllConnections();
-		foreach ($solrConnections as $systemLanguageUid => $solrConnection) {
-			$this->initializeSearch($this->site->getRootPageId(), $systemLanguageUid);
-			$solrDocument = $this->search($uid);
-
-			if($solrDocument != null) {
-				$updateFlag = true;
-				if($this->solrDocumentHasFieldByName($solrDocument, self::GEO_LOCATION_FIELD)) {
-					$geoField = $solrDocument->getField(self::GEO_LOCATION_FIELD);
-					$addressField = $solrDocument->getField(self::ADDRESS_FIELD);
-					if( $geoField['value'] == $locationObject->getGeolocation() &&
-						$addressField['value'] == $address) {
-						$updateFlag = false;
-					}
-				}
-				if($updateFlag) {
-					// Prepare Solr Document
-					$solrDocument->setField(self::GEO_LOCATION_FIELD, $locationObject->getGeolocation());
-					$solrDocument->setField(self::ADDRESS_FIELD, $address);
-					// Need to unset this field otherwise the copyfield function adds teaser text as multivalue!
-					unset($solrDocument->teaser);
-					if(!$this->solrDocumentHasFieldByName($solrDocument, 'appKey')) {
-						$solrDocument->setField('appKey', 'EXT:solr');
-					}
-
-					// Update the Solr Document
-					$response = $solrConnection->addDocument($solrDocument);
-					if ($response->getHttpStatus() == 200) {
-						$updateSolrDocument = true;
-					}
-				}
-			}
-		}
-
-		return $updateSolrDocument;
-	}
-
 	public function dumpSolrDocument(\Apache_Solr_Document $solrDocument) {
 		$fields   = $solrDocument->getFieldNames();
 		$document = array();
@@ -220,60 +209,102 @@ class SolrController {
 	}
 
 	/**
-	 * Search by the given keyword
-	 *
-	 * @param string The search keyword
-	 * @return array Array contains the results
+	 * @param string Distance
 	 */
-	public function searchByKeyword($keyword) {
-		$resultDocuments = array();
-		if ($this->solrAvailable && $keyword != '') {
-			$helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
-			$geocoder = $helper->getGeoCoder();
-			$geolocation = $geocoder->getGeolocationFromKeyword($keyword);
-			if($geolocation != '') {
+	protected function setDistance($distance) {
+		$this->distance = $distance;
+	}
 
-				$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_solr_Query', '');
-				$limit = 10;
-				if (!empty($this->conf['search.']['results.']['resultsPerPage'])) {
-					$limit = $this->conf['search.']['results.']['resultsPerPage'];
-				}
-				$query->setResultsPerPage($limit);
+	/**
+	 * @param string Filter type: geofilt oder bbox
+	 */
+	protected function setFilterType($filterType) {
+		$this->filterType = $filterType;
+	}
 
-				$configuration = $helper->getConfiguration('tx_solrgeo');
-				$filters = $configuration['search.']['filter.'];
-				$distance = '5';
-				$filterType = 'bbox';
-				if(!empty($filters)){
-					$distance = $filters['d'];
-					$filterType = $filters['type'];
-				}
+	/**
+	 * @param string Sort direction: asc or desc
+	 */
+	protected function setSortDirection($direction) {
+		$this->direction = $direction;
+	}
 
-				$query->setAlternativeQuery('*:*');
-				$query->setHighlighting();
+	/**
+	 *
+	 * @return string Returns the distance
+	 */
+	public function getDistance() {
+		return $this->distance;
+	}
 
-				// query string for spartialSearch
-				// {!bbox pt=50.1109221,8.6821267 sfield=geo_location d=5}
-				$query->addFilter('{!'.$filterType.' pt='.$geolocation.' sfield=geo_location d='.$distance.'}');
+	/**
+	 *
+	 * @return string Returns the filter type
+	 */
+	public function getFilterType() {
+		return $this->filterType;
+	}
 
-				$this->query = $query;
+	/**
+	 *
+	 * @return string Returns the sort direction
+	 */
+	public function getSortDirection() {
+		return $this->direction;
+	}
 
-				$offSet = 0;
-				$this->search->search($this->query, $offSet, NULL);
-				$solrResults = $this->search->getResultDocuments();
-				foreach ($solrResults as $result) {
-					$fields   = $result->getFieldNames();
-					$document = array();
-					foreach ($fields as $field) {
-						$fieldValue       = $result->getField($field);
-						$document[$field] = $fieldValue["value"];
-					}
-					$resultDocuments[] = $document;
-				}
+	/**
+	 * Sets the configured filter type, sort direction and distance
+	 *
+	 * @return void
+	 */
+	protected function setGeoSearchConfiguration() {
+		$configuration = $this->helper->getConfiguration('tx_solrgeo');
+		$queryConf = $configuration['search.']['query.'];
 
-			}
+		if(!empty($queryConf['filter.']['d'])){
+			$this->setDistance($queryConf['filter.']['d']);
 		}
-		return $resultDocuments;
+
+		if(!empty($queryConf['filter.']['type'])){
+			$this->setFilterType($queryConf['filter.']['type']);
+		}
+
+		if(!empty($queryConf['sort.']['direction'])) {
+			$this->setSortDirection(strtolower($queryConf['sort.']['direction']));
+		}
+	}
+
+	/**
+	 * Search for Solr Document by given UID of page
+	 *
+	 * @param The type of a solr document
+	 * @param The uid of the type in TYPO3
+	 * @return array contains \Apache_Solr_Document
+	 */
+	public function search($type, $uid) {
+		$solrResults = array();
+		if ($this->solrAvailable) {
+			$query = $this->getDefaultQuery();
+			$queryUid = ($type == 'tx_solr_file') ? 'fileReferenceUid' : 'uid';
+			$query->addFilter('(type:'.$type.' AND '.$queryUid.':' . $uid.')');
+			$this->query = $query;
+			$this->search->search($this->query, 0, NULL);
+			$solrResults = $this->search->getResultDocuments();
+		}
+		return $solrResults;
+	}
+
+	/**
+	 * Get the Query instance with default parameters
+	 *
+	 * @return \Tx_solr_Query
+	 */
+	public function getDefaultQuery() {
+		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_solr_Query', '');
+		$query->setAlternativeQuery('*:*');
+		$query->setSiteHashFilter($this->helper->getDomain());
+		return $query;
 	}
 }
 ?>
