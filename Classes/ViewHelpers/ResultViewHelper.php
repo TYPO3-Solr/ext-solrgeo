@@ -48,12 +48,17 @@ class ResultViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelp
 			$cropViewHelper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Tx_Solr_ViewHelper_Crop');
 			$contentArray = array($resultDocument['content'], $maxLength, $cropIndicator, $cropFullWords);
 
+			$address = $resultDocument['city_textS'];
+			if($resultDocument['address_textS'] != '') {
+				$address = $resultDocument['address_textS'].', '.$resultDocument['city_textS'];
+			}
+
 			$resultString .= '<li class="results-entry">';
 			$resultString .= '<h5 class="results-topic"><a href="'.$link.'">'.$resultDocument['title'].'</a></h5>';
 			$resultString .= '<div class="results-teaser">';
 			$resultString .= '<p class="result-content">';
 			$resultString .=  '<span class="label"><strong>';
-			$resultString .= $resultDocument['address_textS'];
+			$resultString .= $address;
 			$resultString .=  '</strong></span><br />';
 			$resultString .= $cropViewHelper->execute($contentArray);
 			$resultString .= '</p>';

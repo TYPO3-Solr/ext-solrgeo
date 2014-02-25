@@ -108,12 +108,29 @@ class GeoSearchConfiguration {
 		$this->siteConfiguration = $config;
 	}
 
+	/*
+	 * Sets the site configuration for EXT:solrgeo
+	 * */
+	public function checkSiteConfiguration() {
+		if(empty($this->siteConfiguration)) {
+			$objectManager =
+				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+			$configurationManager =
+				$objectManager->get('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManagerInterface');
+
+			$configuration =
+				$configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+			$this->siteConfiguration = $configuration['plugin.']['tx_solrgeo.'];
+		}
+	}
+
 	/**
 	 * Sets the adapter
 	 */
 	private function setAdapter() {
-
+		// Default Adapter
 		$adapterName = self::DEFAULT_ADAPTER;
+		$this->checkSiteConfiguration();
 
 		if(isset($this->siteConfiguration['index.']['adapter'])) {
 			$adapterName = strtolower($this->siteConfiguration['index.']['adapter']);
@@ -152,6 +169,8 @@ class GeoSearchConfiguration {
 		return $this->adapter;
 	}
 
+
+
 	/**
 	 * Sets the provider
 	 */
@@ -159,7 +178,7 @@ class GeoSearchConfiguration {
 		// Default Provider
 		$providerName = self::DEFAULT_PROVIDER;
 		$provider = null;
-
+		$this->checkSiteConfiguration();
 
 		if(!empty($this->siteConfiguration['index.']['provider.'])) {
 			$providerName = strtolower($this->siteConfiguration['index.']['provider.']['name']);
@@ -226,6 +245,7 @@ class GeoSearchConfiguration {
 					$uidList 		= \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $location['uid']);
 					$city 			= trim($location['city']);
 					$address 		= (isset($location['address'])) ? trim($location['address']) : '';
+					$country 		= (isset($location['country'])) ? trim($location['country']) : '';
 					//$zip 			= (isset($location['zip'])) ? trim($location['zip']) : '';
 					$geolocation 	= (isset($location['geolocation'])) ? trim($location['geolocation']) : '';
 
@@ -236,6 +256,7 @@ class GeoSearchConfiguration {
 						$tmp['city'] = $city;
 						//$tmp['zip'] = $zip;
 						$tmp['address'] = $address;
+						$tmp['country'] = $country;
 						$tmp['geolocation'] = $geolocation;
 						$locationList[] = $tmp;
 					}

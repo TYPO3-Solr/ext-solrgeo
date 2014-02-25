@@ -57,7 +57,7 @@ plugin.tx_solrgeo {
 			pages {
 				1 {
 					uid = 3,51
-					city = Frankfurt a.M.
+					city = Frankfurt
 					address = Kaiserstr. 73
 				}
 
@@ -81,6 +81,12 @@ plugin.tx_solrgeo {
 					city = Würzburg
 					address = Keesburgstr. 72
 				}
+				6 {
+					uid = 52, 53
+					city = Wien
+					country = Österreich
+					address = Gredlerstr.
+				}
 			}
 
 			# this are the indexed files with EXT:solrfile or EXT:solrfal
@@ -88,7 +94,7 @@ plugin.tx_solrgeo {
 				1 {
 					# This is the reference UID in the content element!
 					uid = 110
-					city = Frankfurt a.M.
+					city = Frankfurt
 					address = Eissporthalle
 				}
 			}
@@ -97,7 +103,7 @@ plugin.tx_solrgeo {
 			tx_news_domain_model_news {
 				1 {
 					uid = 1
-					city = Frankfurt a.M.
+					city = Frankfurt
 					address = Kaiserstr. 73
 				}
 			}
@@ -126,6 +132,7 @@ plugin.tx_solrgeo {
 
 		faceting = 1
 		faceting {
+			distance = 1
 			distance {
 				ranges {
 					1 {
@@ -140,9 +147,26 @@ plugin.tx_solrgeo {
 				}
 			}
 
-			city {}
+			city = 1
+			city {
+				sort {
+					# asc, desc
+					direction = desc
 
-			country {}
+					# valid values for sort by: distance, alphabetic, numFound (= number of result)
+					type = numFound
+				}
+			}
+			country = 1
+			country {
+				sort {
+					# asc, desc
+					direction = asc
+
+					# valid values for sort by: distance, alphabetic, numFound (= number of result)
+					type = alphabetic
+				}
+			}
 		}
 	}
 }

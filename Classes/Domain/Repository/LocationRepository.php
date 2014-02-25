@@ -51,18 +51,36 @@ class LocationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 	 * Find the stored location
 	 *
 	 * @param array $location
-	 * @return void
+	 * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
 	 */
 	public function findByConfiguredLocation($location) {
 		$query = $this->createQuery();
-		$query->matching(
-			$query->logicalAnd(
-				$query->equals('city',$location['city']),
-				$query->equals('address',$location['address'])
-			)
-		);
 		$query->setLimit((integer)1);
 
+		if($location['geolocation'] == '') {
+			$query->matching(
+				$query->logicalAnd(
+					$query->equals('city',$location['city']),
+					$query->equals('address',$location['address'])
+				)
+			);
+		}
+		else {
+			$query->matching($query->equals('geolocation',$location['geolocation']));
+		}
+		return $query->execute();
+	}
+
+	/**
+	 * Find a record by geolocation
+	 *
+	 * @param string $geolocation
+	 * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
+	 */
+	public function findByGeoLocation($geolocation) {
+		$query = $this->createQuery();
+		$query->setLimit((integer)1);
+		$query->matching($query->equals('geolocation',$geolocation));
 		return $query->execute();
 	}
 
@@ -72,7 +90,6 @@ class LocationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 		$locationObject->setPid($location['uid']);
 		$locationObject->setAddress($location['address']);
 		$locationObject->setZip($location['zip']);
-		$locationObject->setCity($location['city']);
 		return $locationObject;
 	}
 

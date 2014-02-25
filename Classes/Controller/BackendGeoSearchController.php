@@ -55,7 +55,7 @@ class BackendGeoSearchController extends SolrController {
 			if(!empty($solrResults)) {
 				foreach($solrResults as $solrDocument) {
 					if($solrDocument instanceof \Apache_Solr_Document) {
-						$updateFlag = true;
+						/*$updateFlag = true;
 						if($this->solrDocumentHasFieldByName($solrDocument, self::GEO_LOCATION_FIELD)) {
 							$geoField = $solrDocument->getField(self::GEO_LOCATION_FIELD);
 							$addressField = $solrDocument->getField(self::ADDRESS_FIELD);
@@ -64,10 +64,13 @@ class BackendGeoSearchController extends SolrController {
 								$updateFlag = false;
 							}
 						}
-						if($updateFlag) {
+						if($updateFlag) {*/
 							// Prepare Solr Document
+							$solrDocument->setField(self::ADDRESS_FIELD, $locationObject->getAddress());
 							$solrDocument->setField(self::GEO_LOCATION_FIELD, $locationObject->getGeolocation());
-							$solrDocument->setField(self::ADDRESS_FIELD, $address);
+							$solrDocument->setField(self::CITY_FIELD, $locationObject->getCity());
+							$solrDocument->setField(self::COUNTRY_FIELD, $locationObject->getCountry());
+							$solrDocument->setField(self::REGION_FIELD, $locationObject->getRegion());
 							// Need to unset this field otherwise the copyfield function adds teaser text as multivalue!
 							unset($solrDocument->teaser);
 							if(!$this->solrDocumentHasFieldByName($solrDocument, 'appKey')) {
@@ -79,7 +82,7 @@ class BackendGeoSearchController extends SolrController {
 							if ($response->getHttpStatus() == 200) {
 								$updateSolrDocument = true;
 							}
-						}
+						//}
 					}
 				}
 			}

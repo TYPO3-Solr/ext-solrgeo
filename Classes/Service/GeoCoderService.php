@@ -40,6 +40,11 @@ class GeoCoderService extends \Geocoder\Geocoder{
 	const MAX_RESULTS = 5;
 
 	/**
+	 * @var \Geocoder\Result\ResultInterface
+	 */
+	private $georesult = NULL;
+
+	/**
 	 * @var array
 	 * */
 	private $locationList = array();
@@ -64,43 +69,68 @@ class GeoCoderService extends \Geocoder\Geocoder{
 			$locationRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Domain\\Repository\\LocationRepository');
 			$locationRepository->initializeObject();
 			$persistenceManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Persistence\\Generic\\PersistenceManager');
-
 			foreach($this->locationList as $location){
 				$locationObject = null;
 				$result = $locationRepository->findByConfiguredLocation($location);
+				$this->setGeoResult($location['address'],$location['city'],$location['country']);
 				if($result->count() == 0) {
-					// Create new location object
+					$geolocation = $this->getGeolocation($location['geolocation']);
+					// ensure that the record is unique: second search by geolocation
+					$resultGeoLocation = $locationRepository->findByGeoLocation($geolocation);
 					$locationObject = $locationRepository->createLocation($location);
-					$locationObject->setGeolocation($this->getGeolocation($location));
-					$locationRepository->add($locationObject);
-					$persistenceManager->persistAll();
+					$locationObject = $this->fillLocation($locationObject, $geolocation);
+					if($resultGeoLocation->count() == 0) {
+						// Create new location object
+						$locationRepository->add($locationObject);
+						$persistenceManager->persistAll();
+					}
 				}
 				else {
 					// Update the location object with geolocation data
 					$locationObject = $result->getFirst();
 					if($locationObject->getGeolocation() == '') {
-						$locationObject->setGeolocation($this->getGeolocation($location));
+						$locationObject = $this->fillLocation($locationObject, $this->getGeolocation($location['geolocation']));
 						$locationRepository->update($locationObject);
 					}
 				}
-				$solrController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Controller\\BackendGeoSearchController', $site);
-				$solrController->updateSolrDocument($location['type'], $location['uid'],$locationObject);
+
+				if($locationObject != null) {
+					$solrController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Controller\\BackendGeoSearchController', $site);
+					$solrController->updateSolrDocument($location['type'], $location['uid'],$locationObject);
+				}
 			}
 		}
 	}
 
+	public function fillLocation($locationObject, $geolocation) {
+		$locationObject->setGeolocation($geolocation);
+		// For a uniform notation
+		$locationObject->setCity($this->georesult->getCity());
+		$locationObject->setCountry($this->georesult->getCountry());
+		$locationObject->setRegion($this->georesult->getRegion());
+		return $locationObject;
+	}
+
 	/**
 	 *
-	 * @param array Holds the data about a location (e.g. city, address)
-	 * @return string the latitude and longitude as string, comma separated
+	 * @param string Address
+	 * @param string City
 	 */
-	public function getGeolocation($location) {
-		if($location['geolocation'] == '') {
-			$geocode = $this->geocode($location['address'].','.$location['city']);
-			$geolocation = $geocode->getLatitude().','.$geocode->getLongitude();
+	public function setGeoResult($address, $city,$country) {
+		$this->georesult = $this->geocode($address.','.$city,','.$country);
+	}
+
+	/**
+	 *
+	 * @param string latitude and longitude
+	 * @return string Modified latitude and longitude as string, comma separated
+	 */
+	public function getGeolocation($configuredGeolocation) {
+		if($configuredGeolocation == '') {
+			$geolocation = $this->georesult->getLatitude().','.$this->georesult->getLongitude();
 		}
 		else {
-			$geolocation = str_replace(' ','',$location['geolocation']);
+			$geolocation = str_replace(' ','',$configuredGeolocation);
 		}
 		return $geolocation;
 	}
@@ -111,7 +141,6 @@ class GeoCoderService extends \Geocoder\Geocoder{
 	 * @return string the latitude and longitude as string, comma separated
 	 */
 	public function getGeolocationFromKeyword($keyword) {
-		$geocoded = "";
 		try {
 			$geocode = $this->geocode($keyword);
 			$geocoded = $geocode->getLatitude().','.$geocode->getLongitude();

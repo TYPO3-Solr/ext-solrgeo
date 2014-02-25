@@ -73,14 +73,20 @@ class Helper {
 	}
 
 	public function getDomain() {
+		if($this->domain == '') {
+			$this->setDomain();
+		}
 		return $this->domain;
 	}
 
 	public function getFullDomain() {
+		if($this->domain == '') {
+			$this->setDomain();
+		}
 		return 'http://'.$this->domain;
 	}
 
-	private function setConfiguration() {
+	public function setConfiguration() {
 		$objectManager =
 			\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
 		$configurationManager =
@@ -91,6 +97,9 @@ class Helper {
 	}
 
 	public function getConfiguration($extensionKey) {
+		if(empty($this->configuration)) {
+			$this->setConfiguration();
+		}
 		return $this->configuration['plugin.'][$extensionKey.'.'];
 	}
 
@@ -132,6 +141,15 @@ class Helper {
 
 	public function getGeoCoder() {
 		return $this->geocoder;
+	}
+
+	public function getLinkUrl($withKeyword) {
+		$configuration = $this->getConfiguration('tx_solrgeo');
+		$linkUrl = $this->getFullDomain().'/?id='.$configuration['search.']['targetPageId'];
+		if($withKeyword) {
+			$linkUrl .= '&tx_solrgeo_search[q]=';
+		}
+		return $linkUrl;
 	}
 
 }

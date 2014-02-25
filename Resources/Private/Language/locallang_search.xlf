@@ -22,13 +22,19 @@
 				<source>Radius</source>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.filter.distance">
-				<source>Distance filter</source>
+				<source>Distance</source>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.faceting_removeFilter">
 				<source>Remove filter</source>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.search_btn">
 				<source>Search</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo.location">
+				<source>Location</source>
+			</trans-unit>
+			<trans-unit id="tx_solrgeo.country">
+				<source>Country</source>
 			</trans-unit>
 		</body>
 	</file>

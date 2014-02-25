@@ -89,6 +89,21 @@ class SolrController {
 	const ADDRESS_FIELD = "address_textS";
 
 	/**
+	 * @var string
+	 */
+	const CITY_FIELD = "city_textS";
+
+	/**
+	 * @var string
+	 */
+	const COUNTRY_FIELD = "country_textS";
+
+	/**
+	 * @var string
+	 */
+	const REGION_FIELD = "region_textS";
+
+	/**
 	 * Determines whether the solr server is available or not.
 	 */
 	protected $solrAvailable = false;
@@ -96,22 +111,9 @@ class SolrController {
 	/**
 	 * @var \TYPO3\Solrgeo\Utility\Helper
 	 */
-	protected $helper;
+	protected $helper = NULL;
 
-	/**
-	 * @var string
-	 */
-	protected $distance = '5';
 
-	/**
-	 * @var string
-	 */
-	protected $filterType = 'bbox';
-
-	/**
-	 * @var string
-	 */
-	protected $direction = 'asc';
 
 
 
@@ -122,7 +124,7 @@ class SolrController {
 			$this->initializeConfiguration();
 		}
 		$this->helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
-		$this->setGeoSearchConfiguration();
+		//$this->setGeoSearchConfiguration();
 	}
 
 	/**
@@ -208,72 +210,7 @@ class SolrController {
 		return $this->solrAvailable;
 	}
 
-	/**
-	 * @param string Distance
-	 */
-	protected function setDistance($distance) {
-		$this->distance = $distance;
-	}
 
-	/**
-	 * @param string Filter type: geofilt oder bbox
-	 */
-	protected function setFilterType($filterType) {
-		$this->filterType = $filterType;
-	}
-
-	/**
-	 * @param string Sort direction: asc or desc
-	 */
-	protected function setSortDirection($direction) {
-		$this->direction = $direction;
-	}
-
-	/**
-	 *
-	 * @return string Returns the distance
-	 */
-	public function getDistance() {
-		return $this->distance;
-	}
-
-	/**
-	 *
-	 * @return string Returns the filter type
-	 */
-	public function getFilterType() {
-		return $this->filterType;
-	}
-
-	/**
-	 *
-	 * @return string Returns the sort direction
-	 */
-	public function getSortDirection() {
-		return $this->direction;
-	}
-
-	/**
-	 * Sets the configured filter type, sort direction and distance
-	 *
-	 * @return void
-	 */
-	protected function setGeoSearchConfiguration() {
-		$configuration = $this->helper->getConfiguration('tx_solrgeo');
-		$queryConf = $configuration['search.']['query.'];
-
-		if(!empty($queryConf['filter.']['d'])){
-			$this->setDistance($queryConf['filter.']['d']);
-		}
-
-		if(!empty($queryConf['filter.']['type'])){
-			$this->setFilterType($queryConf['filter.']['type']);
-		}
-
-		if(!empty($queryConf['sort.']['direction'])) {
-			$this->setSortDirection(strtolower($queryConf['sort.']['direction']));
-		}
-	}
 
 	/**
 	 * Search for Solr Document by given UID of page
@@ -303,7 +240,7 @@ class SolrController {
 	public function getDefaultQuery() {
 		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_solr_Query', '');
 		$query->setAlternativeQuery('*:*');
-		$query->setSiteHashFilter($this->helper->getDomain());
+		$query->setSiteHashFilter($this->site->getDomain());
 		return $query;
 	}
 }
