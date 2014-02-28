@@ -4,6 +4,7 @@ page.includeCSS {
 }
 
 page.includeJSFooter {
+	jquery = EXT:solr/Resources/JavaScript/JQuery/jquery.min.js
 	google = http://maps.google.com/maps/api/js?sensor=false
 	google.external = 1
 	solrgeo = EXT:solrgeo/Resources/Public/Javascript/Geocoding.js

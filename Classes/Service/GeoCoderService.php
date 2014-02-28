@@ -69,7 +69,10 @@ class GeoCoderService extends \Geocoder\Geocoder{
 	 */
 	public function processGeocoding(\tx_solr_Site $site) {
 		if(!empty($this->locationList)) {
-			$locationRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Domain\\Repository\\LocationRepository');
+			/** @var $extbaseObjectManager \TYPO3\CMS\Extbase\Object\ObjectManager */
+			$extbaseObjectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+			/** @var $locationRepository \TYPO3\Solrgeo\Domain\Repository\LocationRepository' */
+			$locationRepository = $extbaseObjectManager->get('TYPO3\\Solrgeo\\Domain\\Repository\\LocationRepository');
 			$locationRepository->initializeObject();
 			$persistenceManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Persistence\\Generic\\PersistenceManager');
 			foreach($this->locationList as $location){
