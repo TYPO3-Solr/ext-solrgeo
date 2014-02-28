@@ -12,12 +12,13 @@
 
 $EM_CONF[$_EXTKEY] = array(
 	'title' => 'solrgeo',
-	'description' => '',
+	'description' => 'EXT:solrgeo is an add-on to EXT:sor to provide the geo search with Apache Solr Spatial Search.',
 	'category' => 'plugin',
 	'author' => 'Phuong Doan',
 	'author_email' => 'phuong.doan@dkd.de',
 	'author_company' => 'dkd Internet Service GmbH',
 	'shy' => '',
+	'dependencies' => 'cms,extbase,fluid,solr',
 	'priority' => '',
 	'module' => '',
 	'state' => 'alpha',
@@ -25,14 +26,14 @@ $EM_CONF[$_EXTKEY] = array(
 	'uploadfolder' => '0',
 	'createDirs' => '',
 	'modify_tables' => '',
-	'clearCacheOnLoad' => 0,
+	'clearCacheOnLoad' => 1,
 	'lockType' => '',
-	'version' => '',
+	'version' => '0.0.0',
 	'constraints' => array(
 		'depends' => array(
 			'extbase' => '6.0',
 			'fluid' => '6.0',
-			'typo3' => '6.0',
+			'typo3' => '6.0'
 		),
 		'conflicts' => array(
 		),

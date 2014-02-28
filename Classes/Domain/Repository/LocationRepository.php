@@ -48,7 +48,7 @@ class LocationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 	}
 
 	/**
-	 * Find the stored location
+	 * Finds the stored location
 	 *
 	 * @param array $location
 	 * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
@@ -72,7 +72,7 @@ class LocationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 	}
 
 	/**
-	 * Find a record by geolocation
+	 * Finds a record by geolocation
 	 *
 	 * @param string $geolocation
 	 * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
@@ -84,7 +84,12 @@ class LocationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 		return $query->execute();
 	}
 
-	// Create new location object
+	/**
+	 * Creates new location instance
+	 *
+	 * @param array $location
+	 * @return \TYPO3\Solrgeo\Domain\Model\Location
+	 */
 	public function createLocation($location) {
 		$locationObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Domain\\Model\\Location');
 		$locationObject->setPid($location['uid']);
@@ -92,8 +97,6 @@ class LocationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 		$locationObject->setZip($location['zip']);
 		return $locationObject;
 	}
-
-
 
 }
 ?>

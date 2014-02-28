@@ -44,45 +44,32 @@ class BackendGeoSearchController extends SolrController {
 	 */
 	public function updateSolrDocument($type, $uid, \TYPO3\Solrgeo\Domain\Model\Location $locationObject) {
 		$updateSolrDocument = true;
-		$address = ($locationObject->getAddress() != "") ?
-			$locationObject->getAddress().", ".$locationObject->getCity() : $locationObject->getCity();
 
 		$solrConnections = $this->connectionManager->getAllConnections();
-		foreach ($solrConnections as $systemLanguageUid => $solrConnection) {
-			$this->initializeSearch($this->site->getRootPageId(), $systemLanguageUid);
-			$solrResults = $this->search($type, $uid);
-
+		foreach ($solrConnections as $solrConnection) {
+			$solrResults = $this->search($solrConnection, $type, $uid);
 			if(!empty($solrResults)) {
 				foreach($solrResults as $solrDocument) {
 					if($solrDocument instanceof \Apache_Solr_Document) {
-						/*$updateFlag = true;
-						if($this->solrDocumentHasFieldByName($solrDocument, self::GEO_LOCATION_FIELD)) {
-							$geoField = $solrDocument->getField(self::GEO_LOCATION_FIELD);
-							$addressField = $solrDocument->getField(self::ADDRESS_FIELD);
-							if( $geoField['value'] == $locationObject->getGeolocation() &&
-								$addressField['value'] == $address) {
-								$updateFlag = false;
-							}
-						}
-						if($updateFlag) {*/
-							// Prepare Solr Document
-							$solrDocument->setField(self::ADDRESS_FIELD, $locationObject->getAddress());
-							$solrDocument->setField(self::GEO_LOCATION_FIELD, $locationObject->getGeolocation());
-							$solrDocument->setField(self::CITY_FIELD, $locationObject->getCity());
-							$solrDocument->setField(self::COUNTRY_FIELD, $locationObject->getCountry());
-							$solrDocument->setField(self::REGION_FIELD, $locationObject->getRegion());
-							// Need to unset this field otherwise the copyfield function adds teaser text as multivalue!
-							unset($solrDocument->teaser);
-							if(!$this->solrDocumentHasFieldByName($solrDocument, 'appKey')) {
-								$solrDocument->setField('appKey', 'EXT:solr');
-							}
 
-							// Update the Solr Document
-							$response = $solrConnection->addDocument($solrDocument);
-							if ($response->getHttpStatus() == 200) {
-								$updateSolrDocument = true;
-							}
-						//}
+						// Prepare Solr Document
+						$solrDocument->setField(self::ADDRESS_FIELD, $locationObject->getAddress());
+						$solrDocument->setField(self::GEO_LOCATION_FIELD, $locationObject->getGeolocation());
+						$solrDocument->setField(self::CITY_FIELD, $locationObject->getCity());
+						$solrDocument->setField(self::COUNTRY_FIELD, $locationObject->getCountry());
+						$solrDocument->setField(self::REGION_FIELD, $locationObject->getRegion());
+
+						// Need to unset this field otherwise the copyfield function adds teaser text as multivalue!
+						unset($solrDocument->teaser);
+						if(!$this->solrDocumentHasFieldByName($solrDocument, 'appKey')) {
+							$solrDocument->setField('appKey', 'EXT:solr');
+						}
+
+						// Update the Solr Document
+						$response = $solrConnection->addDocument($solrDocument);
+						if ($response->getHttpStatus() == 200) {
+							$updateSolrDocument = true;
+						}
 					}
 				}
 			}

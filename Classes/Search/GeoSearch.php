@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Scheduler;
+namespace TYPO3\Solrgeo\Search;
 
 /***************************************************************
  *  Copyright notice
@@ -25,41 +25,22 @@ namespace TYPO3\Solrgeo\Scheduler;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use \TYPO3\CMS\Scheduler\Task\AbstractTask;
-
 /**
- * Task for GeoCoding
  *
- * @package	solrgeo
+ *
+ * @package solrgeo
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
+ *
  */
-class GeoCoderTask extends AbstractTask implements \TYPO3\CMS\Scheduler\ProgressProviderInterface {
-
-	private $locationCount = 0;
+class GeoSearch extends \Tx_Solr_Search {
 
 	/**
-	 * This is the main method that is called when a task is executed
-	 * It MUST be implemented by all classes inheriting from this one
-	 * Note that there is no error handling, errors and failures are expected
-	 * to be handled and logged by the client implementations.
-	 * Should return TRUE on successful execution, FALSE on error.
+	 * Sets the solr connection to get the correct connection with associated language
+	 * Default it is set with default language => Search implements the Singleton pattern
 	 *
-	 * @return boolean Returns TRUE on successful execution, FALSE on error
+	 * @param \Tx_Solr_SolrService $solrConnection
 	 */
-	public function execute() {
-		$helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
-		$geocoder = $helper->getGeoCoder();
-		$geocoder->processGeocoding($helper->getSolrSite());
-		return TRUE;
-	}
-
-	/**
-	 * Gets the progress of a task.
-	 *
-	 * @return float Progress of the task as a two decimal precision float. f.e. 44.87
-	 */
-	public function getProgress() {
-		/* TODO should be implemented */
-		return 100.00;
+	public function setSolrconnetion($solrConnection) {
+		$this->solr = $solrConnection;
 	}
 }

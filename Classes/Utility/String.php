@@ -34,14 +34,35 @@ namespace TYPO3\Solrgeo\Utility;
  */
 class String {
 
+	/**
+	 * Checks whether string starts with given string
+	 *
+	 * @param string $haystack
+	 * @param string $needle
+	 * @return boolean
+	 */
 	static public function startsWith($haystack, $needle) {
 		return $needle === "" || strpos($haystack, $needle) === 0;
 	}
 
+	/**
+	 * Checks whether string ends with given string
+	 *
+	 * @param string $haystack
+	 * @param string $needle
+	 * @return boolean
+	 */
 	static public function endsWith($haystack, $needle) {
 		return $needle === "" || substr($haystack, -strlen($needle)) === $needle;
 	}
 
+	/**
+	 * Checks whether string contains another string
+	 *
+	 * @param $haystack
+	 * @param $needle
+	 * @return boolean
+	 */
 	static public function contains($haystack, $needle) {
 		$contains = false;
 		if (strpos($haystack,$needle) !== false) {

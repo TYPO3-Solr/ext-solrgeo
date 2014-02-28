@@ -63,7 +63,10 @@ class GeoCoderService extends \Geocoder\Geocoder{
 		$this->locationList = $location;
 	}
 
-
+	/**
+	 * @param \tx_solr_Site $site
+	 * @throws RuntimeException
+	 */
 	public function processGeocoding(\tx_solr_Site $site) {
 		if(!empty($this->locationList)) {
 			$locationRepository = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Domain\\Repository\\LocationRepository');
@@ -96,13 +99,24 @@ class GeoCoderService extends \Geocoder\Geocoder{
 
 				if($locationObject != null) {
 					$solrController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Controller\\BackendGeoSearchController', $site);
-					$solrController->updateSolrDocument($location['type'], $location['uid'],$locationObject);
+					$updateStatus = $solrController->updateSolrDocument($location['type'], $location['uid'],$locationObject);
+					if(!$updateStatus) {
+						throw new RuntimeException('Could not update Solr Document for '.$location['type'].' with uid '.$location['uid'].'.
+						For further information please see in devlog or tomcat log.',
+							1393586058);
+					}
 				}
 			}
 		}
 	}
 
-	public function fillLocation($locationObject, $geolocation) {
+	/**
+	 *
+	 * @param \TYPO3\Solrgeo\Domain\Model\Location $locationObject
+	 * @param string $geolocation
+	 * @return \TYPO3\Solrgeo\Domain\Model\Location
+	 */
+	public function fillLocation(\TYPO3\Solrgeo\Domain\Model\Location $locationObject, $geolocation) {
 		$locationObject->setGeolocation($geolocation);
 		// For a uniform notation
 		$locationObject->setCity($this->georesult->getCity());
@@ -145,10 +159,8 @@ class GeoCoderService extends \Geocoder\Geocoder{
 			$geocode = $this->geocode($keyword);
 			$geocoded = $geocode->getLatitude().','.$geocode->getLongitude();
 		} catch (\Geocoder\Exception\ExceptionInterface $e) {
-			//$geocode = $e->getMessage();
 			$geocoded = "-1";
 		}
-
 		return $geocoded;
 	}
 

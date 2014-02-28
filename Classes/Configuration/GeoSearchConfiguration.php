@@ -31,247 +31,288 @@ namespace TYPO3\Solrgeo\Configuration;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-
-
 class GeoSearchConfiguration {
+	/**
+	 * @var string
+	 */
+	protected $distance = '5';
 
 	/**
-	 * The Default Adapter
+	 * @var string
 	 */
-	const DEFAULT_ADAPTER = 'CurlHttpAdapter';
+	protected $filterType = 'bbox';
 
 	/**
-	 * The Default Provider
+	 * @var string
 	 */
-	const DEFAULT_PROVIDER = 'GoogleMapsProvider';
+	protected $direction = 'asc';
 
 	/**
-	 * @var \tx_solr_Site
+	 * @var boolean
 	 */
-	protected $site;
+	protected $distanceFilterEnable = false;
 
 	/**
 	 * @var array
 	 */
-	protected $siteConfiguration = array();
+	protected $configuredRanges = array();
 
 	/**
-	 * @var array
-	 * */
-	private $supportedAdapter = array(
-		'buzzhttpadapter',
-		'curlhttpadapter',
-		'guzzlehttpadapter',
-		'sockethttpadapter',
-		'zendhttpadapter'
-	);
-
-	/**
-	 * @var array
-	 * */
-	private $supportedProvider = array(
-		'googlemapsprovider'
-	);
-
-	/**
-	 * @var \Geocoder\HttpAdapter\HttpAdapterInterface
-	*/
-	private $adapter;
-
-	/**
-	 * @var \Geocoder\Provider\ProviderInterface
+	 * @var string
 	 */
-	private $provider;
+	protected $facetCitySortDirection = 'asc';
 
 	/**
-	 * @var array
-	 * */
-	private $locationList = array();
-
-
-	/**
-	 * @param \tx_solr_Site $site
+	 * @var string
 	 */
-	public function __construct(\tx_solr_Site $site) {
-		$this->site = $site;
-		// Get the configuration of EXT:solr
-		//$this->siteConfiguration = $site->getSolrConfiguration();
-		$this->setAdapter();
-		$this->setProvider();
-		//$this->setLocationList();
+	protected $facetCitySortType = 'distance';
+
+	/**
+	 * @var boolean
+	 */
+	protected $cityFacetEnable = false;
+
+	/**
+	 * @var string
+	 */
+	protected $facetCountrySortDirection = 'asc';
+
+	/**
+	 * @var string
+	 */
+	protected $facetCountrySortType = 'distance';
+
+	/**
+	 * @var boolean
+	 */
+	protected $searchByCountry = false;
+
+	/**
+	 * @var boolean
+	 */
+	protected $countryFacetEnable = false;
+
+	/**
+	 * @var int
+	 */
+	protected $cityZoom = 8;
+
+	/**
+	 * @var int
+	 */
+	protected $countryZoom = 4;
+
+	/**
+	 * @param string Distance
+	 */
+	public function setDistance($distance) {
+		$this->distance = $distance;
 	}
 
 	/**
-	 * Sets the configuration of given plugin
+	 * @param string Filter type: geofilt oder bbox
 	 */
-	public function setConfiguration(array $config) {
-		$this->siteConfiguration = $config;
-	}
-
-	/*
-	 * Sets the site configuration for EXT:solrgeo
-	 * */
-	public function checkSiteConfiguration() {
-		if(empty($this->siteConfiguration)) {
-			$objectManager =
-				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-			$configurationManager =
-				$objectManager->get('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManagerInterface');
-
-			$configuration =
-				$configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
-			$this->siteConfiguration = $configuration['plugin.']['tx_solrgeo.'];
-		}
+	public function setFilterType($filterType) {
+		$this->filterType = $filterType;
 	}
 
 	/**
-	 * Sets the adapter
+	 * @param string Sort direction: asc or desc
 	 */
-	private function setAdapter() {
-		// Default Adapter
-		$adapterName = self::DEFAULT_ADAPTER;
-		$this->checkSiteConfiguration();
-
-		if(isset($this->siteConfiguration['index.']['adapter'])) {
-			$adapterName = strtolower($this->siteConfiguration['index.']['adapter']);
-			if(!in_array($adapterName, $this->supportedAdapter)) {
-				$adapterName = self::DEFAULT_ADAPTER;
-			}
-		}
-
-		switch ($adapterName) {
-			case 'buzzhttpadapter':
-				$adapter = new \Geocoder\HttpAdapter\BuzzHttpAdapter();
-				break;
-			case 'guzzlehttpadapter':
-				$adapter = new \Geocoder\HttpAdapter\GuzzleHttpAdapter();
-				break;
-			case 'sockethttpadapter':
-				$adapter = new \Geocoder\HttpAdapter\SocketHttpAdapter();
-				break;
-			case 'zendhttpadapter':
-				$adapter = new \Geocoder\HttpAdapter\ZendHttpAdapter();
-				break;
-			case 'curlhttpadapter':
-			default:
-				$adapter  = new \Geocoder\HttpAdapter\CurlHttpAdapter();
-				break;
-		}
-
-		$this->adapter = $adapter;
+	public function setSortDirection($direction) {
+		$this->direction = $direction;
 	}
 
 	/**
 	 *
-	 * @return \Geocoder\HttpAdapter\HttpAdapterInterface Returns the Adapter
+	 * @return string Returns the distance
 	 */
-	public function getAdapter() {
-		return $this->adapter;
-	}
-
-
-
-	/**
-	 * Sets the provider
-	 */
-	private function setProvider() {
-		// Default Provider
-		$providerName = self::DEFAULT_PROVIDER;
-		$provider = null;
-		$this->checkSiteConfiguration();
-
-		if(!empty($this->siteConfiguration['index.']['provider.'])) {
-			$providerName = strtolower($this->siteConfiguration['index.']['provider.']['name']);
-			if(!in_array($providerName, $this->supportedProvider)) {
-				$providerName = self::DEFAULT_PROVIDER;
-			}
-		}
-
-		switch ($providerName) {
-			case 'googlemapsprovider';
-			default:
-				$locale = (isset($this->siteConfiguration['index.']['provider.']['locale'])) ?
-					$this->siteConfiguration['index.']['provider.']['locale'] : null;
-				$region = (isset($this->siteConfiguration['index.']['provider.']['region'])) ?
-					$this->siteConfiguration['index.']['provider.']['region'] : null;
-				$useSsl = false;
-				if(isset($this->siteConfiguration['index.']['provider.']['useSsl'])) {
-					if($this->siteConfiguration['index.']['provider.']['useSsl'] == '1') {
-						$useSsl = true;
-					}
-				}
-
-				$provider = new \Geocoder\Provider\GoogleMapsProvider($this->getAdapter(), $locale, $region, $useSsl);
-				break;
-		}
-
-		$this->provider = $provider;
+	public function getDistance() {
+		return $this->distance;
 	}
 
 	/**
 	 *
-	 * @return \Geocoder\Provider\ProviderInterface Returns the Provider
+	 * @return string Returns the filter type
 	 */
-	public function getProvider() {
-		return $this->provider;
+	public function getFilterType() {
+		return $this->filterType;
 	}
 
 	/**
-	 * Save the defined location configured with Typoscript.
-	 * Required values are the uid of a page/tca-table and the city.
+	 *
+	 * @return string Returns the sort direction
 	 */
-	public function setLocationList() {
-		if(!empty($this->siteConfiguration['index.']['geocode.'])) {
-			$configuredLocations = $this->siteConfiguration['index.']['geocode.'];
-			$locationList = array();
-			foreach ($configuredLocations as $table => $locations) {
-				// per table
-				$table = str_replace(".","",$table);
-				if($table == 'files' || $table == 'file') {
-					$table = 'tx_solr_file';
-				}
-				foreach ($locations as $location) {
-					if(!isset($location['uid'])) {
-						throw new \BadMethodCallException(
-							'Required field UID in defined table '.$table.' for geocoding-process with Solr is missing',
-							1392978390);
-					}
-					else if(!isset($location['city'])) {
-						throw new \BadMethodCallException(
-							'Required field CITY in defined table '.$table.' for geocoding-process with Solr is missing',
-							1392978390);
-					}
-
-					$uidList 		= \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $location['uid']);
-					$city 			= trim($location['city']);
-					$address 		= (isset($location['address'])) ? trim($location['address']) : '';
-					$country 		= (isset($location['country'])) ? trim($location['country']) : '';
-					//$zip 			= (isset($location['zip'])) ? trim($location['zip']) : '';
-					$geolocation 	= (isset($location['geolocation'])) ? trim($location['geolocation']) : '';
-
-					foreach($uidList as $uid) {
-						$tmp = array();
-						$tmp['type'] = $table;
-						$tmp['uid'] = $uid;
-						$tmp['city'] = $city;
-						//$tmp['zip'] = $zip;
-						$tmp['address'] = $address;
-						$tmp['country'] = $country;
-						$tmp['geolocation'] = $geolocation;
-						$locationList[] = $tmp;
-					}
-				}
-			}
-			$this->locationList = $locationList;
-		}
-
+	public function getSortDirection() {
+		return $this->direction;
 	}
 
 	/**
-	 * @return array Array contains the defined location to add to Solrdocument
+	 * @param string $facetCitySortDirection
 	 */
-	public function getLocationList() {
-		return $this->locationList;
+	public function setFacetCitySortDirection($facetCitySortDirection) {
+		$this->facetCitySortDirection = $facetCitySortDirection;
 	}
 
-}
+	/**
+	 * @return string
+	 */
+	public function getFacetCitySortDirection() {
+		return $this->facetCitySortDirection;
+	}
+
+	/**
+	 * @param string $facetCitySortType
+	 */
+	public function setFacetCitySortType($facetCitySortType) {
+		$this->facetCitySortType = $facetCitySortType;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFacetCitySortType() {
+		return $this->facetCitySortType;
+	}
+
+	/**
+	 * @param mixed $cityFacetEnable
+	 */
+	public function setCityFacetEnable($cityFacetEnable) {
+		$this->cityFacetEnable = $cityFacetEnable;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function isCityFacetEnable() {
+		return $this->cityFacetEnable;
+	}
+
+	/**
+	 * @param mixed $showDistanceFilter
+	 */
+	public function setDistanceFilterEnable($showDistanceFilter) {
+		$this->distanceFilterEnable = $showDistanceFilter;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function isDistanceFilterEnable() {
+		return $this->distanceFilterEnable;
+	}
+
+	/**
+	 * @param string $facetCountrySortDirection
+	 */
+	public function setFacetCountrySortDirection($facetCountrySortDirection) {
+		$this->facetCountrySortDirection = $facetCountrySortDirection;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFacetCountrySortDirection() {
+		return $this->facetCountrySortDirection;
+	}
+
+	/**
+	 * @param string $facetCountrySortType
+	 */
+	public function setFacetCountrySortType($facetCountrySortType) {
+		$this->facetCountrySortType = $facetCountrySortType;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getFacetCountrySortType() {
+		return $this->facetCountrySortType;
+	}
+
+	/**
+	 * @param boolean $countryFacetEnable
+	 */
+	public function setCountryFacetEnable($countryFacetEnable) {
+		$this->countryFacetEnable = $countryFacetEnable;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isCountryFacetEnable() {
+		return $this->countryFacetEnable;
+	}
+
+	/**
+	 * @param array $ranges
+	 */
+	public function setConfiguredRanges($ranges) {
+		$this->configuredRanges = $ranges;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function getConfiguredRanges(){
+		return $this->configuredRanges;
+	}
+
+	/**
+	 * @param string $direction
+	 */
+	public function setDirection($direction) {
+		$this->direction = $direction;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDirection() {
+		return $this->direction;
+	}
+
+	/**
+	 * @param boolean $searchByCountry
+	 */
+	public function setSearchByCountry($searchByCountry) {
+		$this->searchByCountry = $searchByCountry;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function isSearchByCountry() {
+		return $this->searchByCountry;
+	}
+
+	/**
+	 * @param int $zoom
+	 */
+	public function setCityZoom($cityZoom) {
+		$this->cityZoom = $cityZoom;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getCityZoom() {
+		return $this->cityZoom;
+	}
+
+	/**
+	 * @param int $countryZoom
+	 */
+	public function setCountryZoom($countryZoom) {
+		$this->countryZoom = $countryZoom;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getCountryZoom() {
+		return $this->countryZoom;
+	}
+
+} 

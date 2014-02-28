@@ -45,3 +45,8 @@ input.f3-form-error {
 #result-container {
 	margin-top: 20px;
 }
+
+#map-canvas {
+	height:250px;
+	width:300px;
+}

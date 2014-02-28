@@ -113,10 +113,6 @@ class SolrController {
 	 */
 	protected $helper = NULL;
 
-
-
-
-
 	public function __construct(\tx_solr_Site $site) {
 		$this->site = $site;
 		$this->connectionManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_solr_ConnectionManager');
@@ -124,17 +120,14 @@ class SolrController {
 			$this->initializeConfiguration();
 		}
 		$this->helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
-		//$this->setGeoSearchConfiguration();
 	}
 
 	/**
 	 * Initializes the controller
 	 *
-	 * @param integer A page ID.
-	 * @param integer The language ID to get the configuration for as the path may differ. Optional, defaults to 0.
 	 * @return void
 	 */
-	public function initialize($pageId = 1, $languageId = 0) {
+	public function initialize() {
 		$this->connectionManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_solr_ConnectionManager');
 		if(!$this->solrAvailable) {
 			$this->initializeConfiguration();
@@ -152,7 +145,8 @@ class SolrController {
 	 */
 	protected function initializeSearch($pageId = 1, $languageId = 0) {
 		$solr = $this->connectionManager->getConnectionByPageId($pageId,$languageId);
-		$this->search = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Tx_Solr_Search', $solr);
+		$this->search = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('\TYPO3\Solrgeo\Search\GeoSearch', $solr);
+		$this->search->setSolrconnetion($solr);
 		$this->solrAvailable = $this->search->ping();
 	}
 
@@ -198,7 +192,7 @@ class SolrController {
 			$fieldValue       = $solrDocument->getField($field);
 			$document[$field] = $fieldValue["value"];
 		}
-		print_r($document);
+		var_dump($document);
 	}
 
 	/**
@@ -211,23 +205,24 @@ class SolrController {
 	}
 
 
-
 	/**
 	 * Search for Solr Document by given UID of page
 	 *
-	 * @param The type of a solr document
-	 * @param The uid of the type in TYPO3
+	 * @param \Tx_Solr_SolrService
+	 * @param string The type of a solr document
+	 * @param string The uid of the type in TYPO3
 	 * @return array contains \Apache_Solr_Document
 	 */
-	public function search($type, $uid) {
+	public function search(\Tx_Solr_SolrService $solrConnection, $type, $uid) {
 		$solrResults = array();
-		if ($this->solrAvailable) {
+		$search = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('\TYPO3\Solrgeo\Search\GeoSearch', $solrConnection);
+		$search->setSolrconnetion($solrConnection);
+		if ($search->ping()) {
 			$query = $this->getDefaultQuery();
 			$queryUid = ($type == 'tx_solr_file') ? 'fileReferenceUid' : 'uid';
 			$query->addFilter('(type:'.$type.' AND '.$queryUid.':' . $uid.')');
-			$this->query = $query;
-			$this->search->search($this->query, 0, NULL);
-			$solrResults = $this->search->getResultDocuments();
+			$search->search($query, 0, NULL);
+			$solrResults = $search->getResultDocuments();
 		}
 		return $solrResults;
 	}

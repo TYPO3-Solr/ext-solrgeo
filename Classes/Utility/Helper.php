@@ -34,8 +34,14 @@ namespace TYPO3\Solrgeo\Utility;
  */
 class Helper {
 
+	/**
+	 * @var array
+	 */
 	private $configuration = array();
 
+	/**
+	 * @var string
+	 */
 	private $domain = "";
 
 	/**
@@ -53,7 +59,7 @@ class Helper {
 	private $site = NULL;
 
 	/**
-	 * @var TYPO3\Solrgeo\Service\GeoCoderService
+	 * @var \TYPO3\Solrgeo\Service\GeoCoderService
 	 */
 	private $geocoder = NULL;
 
@@ -62,9 +68,12 @@ class Helper {
 		$this->setDomain();
 		$this->setConfiguration();
 		$this->setSolrSite();
-		$this->setGeoSearchConfiguration();
+		$this->prepareForGeocoderService();
 	}
 
+	/**
+	 * Sets the domain
+	 */
 	private function setDomain() {
 		$sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_pageSelect');
 		$rootLine = $sys_page->getRootLine($GLOBALS['TSFE']->id);
@@ -72,6 +81,11 @@ class Helper {
 		$this->domain = $sys_befunc->firstDomainRecord($rootLine);
 	}
 
+	/**
+	 * Returns the domain without http-prefix
+	 *
+	 * @return string
+	 */
 	public function getDomain() {
 		if($this->domain == '') {
 			$this->setDomain();
@@ -79,6 +93,11 @@ class Helper {
 		return $this->domain;
 	}
 
+	/**
+	 * Returns the domain with http-prefix
+	 *
+	 * @return string
+	 */
 	public function getFullDomain() {
 		if($this->domain == '') {
 			$this->setDomain();
@@ -86,6 +105,9 @@ class Helper {
 		return 'http://'.$this->domain;
 	}
 
+	/**
+	 * Sets the TS Configuration
+	 */
 	public function setConfiguration() {
 		$objectManager =
 			\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
@@ -96,6 +118,12 @@ class Helper {
 			$configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
 	}
 
+	/**
+	 * Returns the TS configuration from given extension key
+	 *
+	 * @param string $extensionKey
+	 * @return array
+	 */
 	public function getConfiguration($extensionKey) {
 		if(empty($this->configuration)) {
 			$this->setConfiguration();
@@ -103,27 +131,42 @@ class Helper {
 		return $this->configuration['plugin.'][$extensionKey.'.'];
 	}
 
+	/**
+	 * @param \Tx_Solr_Query $query
+	 */
 	public function setQuery(\Tx_Solr_Query $query) {
 		$this->query = $query;
 	}
 
+	/**
+	 * @return \Tx_Solr_Query
+	 */
 	public function getQuery() {
 		return $this->query;
 	}
 
+	/**
+	 * Sets the Solr Site
+	 */
 	private function setSolrSite() {
-		$sites = \tx_solr_Site::getAvailableSites();
+		$sites = \Tx_solr_Site::getAvailableSites();
 		$site = array_shift($sites);
 		$this->site = $site;
 	}
 
+	/**
+	 * @return \Tx_Solr_Site
+	 */
 	public function getSolrSite() {
 		return $this->site;
 	}
 
-	private function setGeoSearchConfiguration() {
+	/**
+	 *  Prepare same values for the geocoding process
+	 */
+	private function prepareForGeocoderService() {
 		$solrGeoConfig = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
-			'TYPO3\\Solrgeo\\Configuration\\GeoSearchConfiguration',
+			'TYPO3\\Solrgeo\\Configuration\\IndexConfigurator',
 			$this->getSolrSite());
 		$solrGeoConfig->setConfiguration($this->getConfiguration('tx_solrgeo'));
 		$solrGeoConfig->setLocationList();
@@ -139,10 +182,20 @@ class Helper {
 		$this->geocoder = $geocoder;
 	}
 
+	/**
+	 *
+	 * @return \TYPO3\Solrgeo\Service\GeoCoderService
+	 */
 	public function getGeoCoder() {
 		return $this->geocoder;
 	}
 
+	/**
+	 * Builds the url for the plugin
+	 *
+	 * @param string $withKeyword
+	 * @return string
+	 */
 	public function getLinkUrl($withKeyword) {
 		$configuration = $this->getConfiguration('tx_solrgeo');
 		$linkUrl = $this->getFullDomain().'/?id='.$configuration['search.']['targetPageId'];

@@ -9,7 +9,16 @@
 
 			<div id="tx-solr-search-functions">
 				<div id="tx-solrgeo-distance">
-					<solrgeo:distanceFilter keyword="{keyword}" defaultDistance="{distance}" distanceFilter="{distanceFilter}"/>
+
+					<solrgeo:distanceFilter
+						showDistanceFilter="{showDistanceFilter}"
+						linkUrl="{linkUrl}"
+						keyword="{keyword}"
+						defaultDistance="{defaultDistance}"
+						configuredDistanceRanges="{configuredDistanceRanges}"
+						currentRange="{currentRange}"
+						language="{language}" />
+
 					<f:if condition="<f:count subject='{cityFacetResults}' /> > 0">
 						<div class="secondaryContentSection">
 							<div class="csc-header">
@@ -58,7 +67,15 @@
 					</f:if>
 				</div>
 			</div>
+
 			<div id="tx-solr-search">
+
+				<f:if condition="{searchHasResults}">
+					<div id="map-canvas"></div>
+					<solrgeo:javascriptInlineSetting namespace="dkd.solrgeo" array="{dataForGoogleMaps}" />
+					<solrgeo:javascriptInlineSetting namespace="dkd.solrgeo.location" array="{currentGeolocation}" />
+					<solrgeo:javascriptInlineSetting namespace="dkd.solrgeo.zoom" key="zoom" value="{zoom}" />
+				</f:if>
 
 				<div class="tx-solrgeo-search-form">
 					<f:form id="tx-solr-search" action="search" controller="Search" class="form-search" enctype="multipart/form-data">

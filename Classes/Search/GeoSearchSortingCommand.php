@@ -34,6 +34,11 @@ namespace TYPO3\Solrgeo\Search;
  */
 class GeoSearchSortingCommand extends \Tx_Solr_PiResults_SortingCommand {
 
+	/**
+	 * Manipulates the Sort-By Links
+	 *
+	 * @return array
+	 */
 	protected function getSortingLinks() {
 		$helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
 		$settings = $helper->getConfiguration('tx_solrgeo');

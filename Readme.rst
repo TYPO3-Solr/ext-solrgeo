@@ -1,15 +1,27 @@
-Extension Manual
-=================
+============================================================
+Solrgeo for Apache Solr for TYPO3
+============================================================
 
-This is a template manual aiming to pave the way to developers when it comes about documentation. The template provides a structure that a developer can take over and, in addition, many useful snippets and examples. Documentation is written in reST format. Refer to Help writing reStructuredText to get some more insight about the syntax and available reST editors. For instance, you might be particularly interested how you can :
+EXT:solrgeo is an add-on to EXT:sor to provide the geo search with Apache Solr Spatial Search (https://wiki.apache.org/solr/SpatialSearch) and the geocoder PHP library. For more information about this library, visit http://geocoder-php.org.
 
-* generate the documentation using on-line services (@todo to write) 
-* `make links`_ accros projects
-* how you should write TypoScript reference.
 
-Any idea or suggestion for improving this template `can be drop`_ to our team_. And remember: documentation is like gift wrapping, it looks like superfluous, but your friend tends to be rather disappointed when their presents arrive in supermarket carrier bags. (Documentation-Driven Design quote)
+------------------------
+Requirement:
+------------------------
+* EXT:solr 3.0.0
+* Solr Server 4.x
+* TYPO3 6.1+
 
-.. _can be drop: http://forge.typo3.org/projects/typo3v4-official_extension_template/issues
-.. _team: http://forge.typo3.org/projects/typo3v4-official_extension_template
-.. _make links: RestructuredtextHelp.html#cross-linking
-.. _can write TypoScript: RestructuredtextHelp.html#typoscript-reference
+
+------------------------
+Features:
+------------------------
+
+* Almost all search functionalities are configured with TS.
+* Supports Provider for Google Maps, Google Maps Business or OpenStreetMap
+* Working this filters for Spatial Search: 
+  ** Distance filter: geofilt (for an exact search result)
+  ** Bounding-box filter: bbox (loose search)
+* Location data can be added to several tables: pages, files (indexed with EXT:solrfile or EXT:solrfal), tx_news_domain_model_news, etc.
+* Results are grouped by city and country for facets
+* Results are marked in Google Maps
