@@ -4,37 +4,37 @@
 		<header/>
 		<body>
 			<trans-unit id="tx_solrgeo.searchUnavailable">
-				<source>Die Suche steht im Moment nicht zur Verfügung.</source>
+				<target>Die Suche steht im Moment nicht zur Verfügung.</target>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.searchFailed">
-				<source>Es tut uns leid. Ihre Suchanfrage konnte nicht verarbeitet werden.</source>
+				<target>Es tut uns leid. Ihre Suchanfrage konnte nicht verarbeitet werden.</target>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.no_results_nothing_found">
-				<source>Nichts gefunden für </source>
+				<target>Nichts gefunden für </target>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.error_emptyQuery">
-				<source>Bitte geben Sie Ihr Suchwort in das Suchfeld ein.</source>
+				<target>Bitte geben Sie Ihr Suchwort in das Suchfeld ein.</target>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.within">
-				<source> innerhalb von </source>
+				<target> innerhalb von </target>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.radius">
-				<source>Umkreis</source>
+				<target>Umkreis</target>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.filter.distance">
-				<source>Distanz</source>
+				<target>Distanz</target>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.faceting_removeFilter">
-				<source>Filter entfernen</source>
+				<target>Filter entfernen</target>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.search_btn">
-				<source>Suchen</source>
+				<target>Suchen</target>
 			</trans-unit>
 			<trans-unit id="tx_solrgeo.location">
-            	<source>Ort</source>
+            	<target>Ort</target>
             </trans-unit>
             <trans-unit id="tx_solrgeo.country">
-				<source>Land</source>
+				<target>Land</target>
 			</trans-unit>
 		</body>
 	</file>

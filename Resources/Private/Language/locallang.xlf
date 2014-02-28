@@ -25,7 +25,12 @@
 			<trans-unit id="tx_solrgeo_domain_model_location.geolocation">
 				<source>geolocation</source>
 			</trans-unit>
-			
+			<trans-unit id="scheduler.title">
+            	<source>Solr Geo search</source>
+            </trans-unit>
+            <trans-unit id="scheduler.description">
+				<source>Updates solr documents with geolocation data</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
