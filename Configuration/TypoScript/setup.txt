@@ -81,7 +81,7 @@ plugin.tx_solrgeo {
 				3 {
 					uid = 4
 					city = Frankfurt
-					address = Hauptwache
+					address = Kaiserstr. 73
 				}
 
 			}
@@ -113,7 +113,6 @@ plugin.tx_solrgeo {
 		# Needed if you will link from EXT:solr to EXT:solrgeo.
 		# TargetPageId is the id of page which includes the plugin
 		targetPageId = 75
-
 
 		query {
 			filter {
