@@ -48,11 +48,17 @@ class GeoSearchSortingCommand extends \Tx_Solr_PiResults_SortingCommand {
 			foreach($sortOption as $key => $value) {
 				if($key == 'optionName' && $value == 'geosearch') {
 					if(!empty($settings['search.']['targetPageId'])) {
+						$query = $this->search->getQuery();
 						$tmp = $sortOption;
 						unset($sortOptions[$k]);
-						$query = $this->search->getQuery();
-						$tmp['link'] = '<a href="'.$helper->getFullDomain().'/
-											?id='.$settings['search.']['targetPageId'].'&tx_solrgeo_search[q]='.$query->getKeywordsRaw().'">'.$tmp['label'].'</a>';
+						$linkConfiguration = array(
+							'useCacheHash'     => FALSE,
+							'no_cache'         => FALSE,
+							'parameter'        => $settings['search.']['targetPageId'],
+							'additionalParams' => '&tx_solrgeo_search[q]='.$query->getKeywordsRaw()
+						);
+						$cObj=\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tslib_cObj');
+						$tmp['link'] = $cObj->typoLink($tmp['label'], $linkConfiguration);
 						$sortOptions[] = $tmp;
 					}
 				}
@@ -61,6 +67,4 @@ class GeoSearchSortingCommand extends \Tx_Solr_PiResults_SortingCommand {
 
 		return $sortOptions;
 	}
-
-
 } 

@@ -94,18 +94,6 @@ class Helper {
 	}
 
 	/**
-	 * Returns the domain with http-prefix
-	 *
-	 * @return string
-	 */
-	public function getFullDomain() {
-		if($this->domain == '') {
-			$this->setDomain();
-		}
-		return 'http://'.$this->domain;
-	}
-
-	/**
 	 * Sets the TS Configuration
 	 */
 	public function setConfiguration() {
@@ -188,21 +176,6 @@ class Helper {
 	 */
 	public function getGeoCoder() {
 		return $this->geocoder;
-	}
-
-	/**
-	 * Builds the url for the plugin
-	 *
-	 * @param string $withKeyword
-	 * @return string
-	 */
-	public function getLinkUrl($withKeyword) {
-		$configuration = $this->getConfiguration('tx_solrgeo');
-		$linkUrl = $this->getFullDomain().'/?id='.$configuration['search.']['targetPageId'];
-		if($withKeyword) {
-			$linkUrl .= '&tx_solrgeo_search[q]=';
-		}
-		return $linkUrl;
 	}
 
 }

@@ -148,6 +148,7 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		$this->keyword = $this->request->getArgument('q');
 		$this->geoSearchController->setGeolocation($this->keyword);
 
+		$this->geoSearchController->setHelper($this->helper);
 		$this->resultDocuments = $this->geoSearchController->searchByKeyword($this->keyword, $this->distance, $this->range);
 		$this->cityFacetResults = $this->geoSearchController->getFacetGrouping(
 			$this->keyword,
@@ -181,11 +182,11 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		$this->view->assign('countryKeyword',$countryKeyword);
 
 		// distance filter
-		$this->view->assign('showDistanceFilter',$geoSearchObject->isDistanceFilterEnable());
-		$this->view->assign('defaultDistance',$geoSearchObject->getDistance());
+		$this->view->assign('showDistanceFilter',(($geoSearchObject->isDistanceFilterEnable() && $this->keyword != "") ? true : false));
+		$this->view->assign('distanceFilterContent',array($geoSearchObject->getDistance()));
 		$this->view->assign('configuredDistanceRanges',$geoSearchObject->getConfiguredRanges());
-		$this->view->assign('linkUrl',$this->helper->getLinkUrl(true));
 		$this->view->assign('currentRange',$this->range);
+		$this->view->assign('removeFilterContent',array());
 
 		// results
 		$this->view->assign('resultDocuments',$this->resultDocuments);

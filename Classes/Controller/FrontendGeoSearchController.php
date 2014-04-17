@@ -48,6 +48,19 @@ class FrontendGeoSearchController extends SolrController {
 	 */
 	protected $searchHasResults = false;
 
+	/**
+	 * @var \TYPO3\Solrgeo\Utility\Helper
+	 */
+	protected $helper;
+
+	/**
+	 * @param \TYPO3\Solrgeo\Utility\Helper $helper
+	 */
+	public function setHelper($helper) {
+		$this->helper = $helper;
+	}
+
+
 	public function initializeGeoSearchConfiguration() {
 		$this->createGeoSearchObject();
 	}
@@ -220,6 +233,8 @@ class FrontendGeoSearchController extends SolrController {
 		$this->search->search($this->query, 0, NULL);
 		$solrResults = $this->search->getResultDocuments();
 
+		$settings = $this->helper->getConfiguration('tx_solrgeo');
+
 		if(!empty($solrResults)) {
 			$this->setSearchHasResults(true);
 			foreach ($solrResults as $result) {
@@ -231,6 +246,20 @@ class FrontendGeoSearchController extends SolrController {
 						$fieldValue       = $result->getField($field);
 						$document[$field] = $fieldValue["value"];
 					}
+
+					// modify results for FE
+					$cropViewHelper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('Tx_Solr_ViewHelper_Crop');
+					$cropMaxLength = (isset($settings['search.']['results.']['crop.']['maxLength'])) ?  $settings['search.']['results.']['crop.']['maxLength'] : 200;
+					$cropIndicator = (isset($settings['search.']['results.']['crop.']['indicator'])) ?  $settings['search.']['results.']['crop.']['indicator'] : '...';
+					$cropFullWords = (isset($settings['search.']['results.']['crop.']['fullWords'])) ?  $settings['search.']['results.']['crop.']['fullWords'] : 1;
+					$contentArray = array($document['content'], $cropMaxLength, $cropIndicator, $cropFullWords);
+
+					$address = $document['city_textS'];
+					if($document['address_textS'] != '') {
+						$address = $document['address_textS'].', '.$document['city_textS'];
+					}
+					$document['address'] = $address;
+					$document['cropped_content'] = $cropViewHelper->execute($contentArray);
 					$resultDocuments[] = $document;
 				}
 			}
@@ -245,7 +274,6 @@ class FrontendGeoSearchController extends SolrController {
 			$additionInformation .= '.';
 			$resultDocuments[] = $this->getErrorResult('no_results_nothing_found',$additionInformation);
 		}
-
 		return $resultDocuments;
 	}
 
@@ -388,9 +416,6 @@ class FrontendGeoSearchController extends SolrController {
 							$result = array();
 							$result['numFound'] = $doclist->numFound;
 							$result[$groupKey] = $groupedValue;
-							$result['url'] = $this->helper->getLinkUrl(true).
-									(($facetType == self::CITY_FIELD) ? $groupedValue : $groupKey.",".$groupedValue) .
-									'&L='.$language;
 							$resultDocuments[] = $result;
 						}
 					}

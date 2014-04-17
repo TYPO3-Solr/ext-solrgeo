@@ -1,17 +1,9 @@
-.tx-solrgeo input.tx-solr-q {
-	width: 70%;
-}
-
-.tx-solrgeo .tx-solr-submit {
-	width: 20%;
-}
-
 .tx-solrgeo-search-form {
 	background-color: #F2F2F2;
 	border: 1px solid #CFCECF;
 	margin-bottom: 10px;
 	padding: 10px;
-	height: 25px;
+	height: 55px;
 }
 
 textarea.f3-form-error {
@@ -37,16 +29,37 @@ input.f3-form-error {
 	vertical-align:top;
 }
 
-
-#tx-solr-search {
-
-}
-
 #result-container {
 	margin-top: 20px;
 }
 
 #map-canvas {
-	height:250px;
-	width:300px;
+	height:350px;
+	width:100%;
+}
+
+.tx-solrgeo-search-form #tx-solr-search {
+	float:left;
+	width:100%;
+}
+#tx-solr-search .results-list {
+	padding-left: 0;
+}
+
+#tx-solrgeo-distance li {
+	list-style-type: none;
+}
+
+li.default-distance-range {
+	margin-bottom: 10px;
+}
+li.facets-remove-all {
+	margin-top: 10px;
+}
+
+div.results-teaser p.result-address {
+	font-size: 100%;
+	font-weight: bold;
+	color: #000;
+	padding: 0;
 }

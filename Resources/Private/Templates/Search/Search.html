@@ -10,14 +10,41 @@
 			<div id="tx-solr-search-functions">
 				<div id="tx-solrgeo-distance">
 
-					<solrgeo:distanceFilter
-						showDistanceFilter="{showDistanceFilter}"
-						linkUrl="{linkUrl}"
-						keyword="{keyword}"
-						defaultDistance="{defaultDistance}"
-						configuredDistanceRanges="{configuredDistanceRanges}"
-						currentRange="{currentRange}"
-						language="{language}" />
+					<f:if condition="{showDistanceFilter}">
+						<f:if condition="<f:count subject='{configuredDistanceRanges}' /> > 0">
+							<div class="secondaryContentSection">
+								<div class="csc-header">
+									<h3 class="csc-firstHeader">
+										<f:translate key="LLL:EXT:solrgeo/Resources/Private/Language/locallang_search.xml:tx_solrgeo.filter.distance"></f:translate>
+									</h3>
+								</div>
+
+								<ul class='facets'>
+									<li class="default-distance-range">
+										<f:if condition="{currentRange}">
+											<f:then><solrgeo:resultLink array="{distanceFilterContent}" keyword="{keyword}" linktype="distancefilter" lng="{language}" /></f:then>
+											<f:else><strong><solrgeo:resultLink array="{distanceFilterContent}" keyword="{keyword}"  linktype="distancefilter" lng="{language}" /></strong></f:else>
+										</f:if>
+									</li>
+
+									<f:for each="{configuredDistanceRanges}" as="configuredDistanceRange">
+										<li>
+											<f:if condition="{currentRange} == {configuredDistanceRange.value}">
+												<f:then><strong><solrgeo:resultLink array="{configuredDistanceRange}" keyword="{keyword}" linktype="distancerange" lng="{language}" /></strong></f:then>
+												<f:else><solrgeo:resultLink array="{configuredDistanceRange}" keyword="{keyword}" linktype="distancerange" lng="{language}" /></f:else>
+
+											</f:if>
+										</li>
+									</f:for>
+
+									<f:if condition="{currentRange}">
+										<li class="facets-remove-all"><solrgeo:resultLink array="{removeFilterContent}" keyword="{keyword}" linktype="removefilter" lng="{language}" /></li>
+									</f:if>
+								</ul>
+
+							</div>
+						</f:if>
+					</f:if>
 
 					<f:if condition="<f:count subject='{cityFacetResults}' /> > 0">
 						<div class="secondaryContentSection">
@@ -30,16 +57,16 @@
 									<a href="{cityFacetResult.url}">
 										<f:if condition="{0:cityFacetResult.city} == {0:'{keyword}'}">
 											<f:then>
-												<strong>{cityFacetResult.city} ({cityFacetResult.numFound})</strong>
+												<strong><solrgeo:resultLink array="{cityFacetResult}" keyword="{keyword}" linktype="city-facet" lng="{language}" /></strong>
 											</f:then>
 											<f:else>
-												{cityFacetResult.city} ({cityFacetResult.numFound})
+												<solrgeo:resultLink array="{cityFacetResult}" keyword="{keyword}" linktype="city-facet" lng="{language}" />
 											</f:else>
 										</f:if>
 									</a>
 								</li>
 							</f:for>
-							<ul>
+							</ul>
 						</div>
 					</f:if>
 					<f:if condition="<f:count subject='{countryFacetResults}' /> > 0">
@@ -53,10 +80,10 @@
 										<a href="{countryFacetResult.url}">
 											<f:if condition="{0:countryFacetResult.country} == {0:'{countryKeyword}'}">
 												<f:then>
-													<strong>{countryFacetResult.country} ({countryFacetResult.numFound})</strong>
+													<strong><solrgeo:resultLink array="{countryFacetResult}" keyword="{keyword}" linktype="country-facet" lng="{language}" /></strong>
 												</f:then>
 												<f:else>
-													{countryFacetResult.country} ({countryFacetResult.numFound})
+													<solrgeo:resultLink array="{countryFacetResult}" keyword="{keyword}" linktype="country-facet" lng="{language}" />
 												</f:else>
 											</f:if>
 										</a>
@@ -89,7 +116,14 @@
 					<ol class="results-list">
 					<f:for each="{resultDocuments}" as="resultDocument">
 						<div class="result">
-							<solrgeo:result resultDocument="{resultDocument}" maxLength="200" />
+
+							<li class="results-entry">
+								<h5 class="results-topic"><solrgeo:resultLink array="{resultDocument}" keyword="{keyword}" linktype="resultentry" lng="{language}" /></h5>
+								<div class="results-teaser">
+									<p class="result-address">{resultDocument.address}</p>
+									<p class="result-content">{resultDocument.cropped_content}</p>
+								</div>
+							</li>
 						</div>
 					</f:for>
 					</ol>

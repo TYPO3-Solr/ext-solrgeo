@@ -36,6 +36,9 @@
             <trans-unit id="tx_solrgeo.country">
 				<target>Land</target>
 			</trans-unit>
+			<trans-unit id="tx_solrgeo.default">
+            	<target>Default</target>
+           	</trans-unit>
 		</body>
 	</file>
 </xliff>
