@@ -25,14 +25,15 @@ namespace TYPO3\Solrgeo\Configuration;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+
+
 /**
  *
  * @package solrgeo
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- *
  */
-
-
 class IndexConfigurator {
 
 	/**
@@ -46,7 +47,7 @@ class IndexConfigurator {
 	const DEFAULT_PROVIDER = 'GoogleMapsProvider';
 
 	/**
-	 * @var \tx_solr_Site
+	 * @var \Tx_Solr_Site
 	 */
 	protected $site;
 
@@ -57,8 +58,9 @@ class IndexConfigurator {
 
 	/**
 	 * @var array
-	 * */
-	private $supportedAdapter = array(
+	 */
+	// FIXME must not add new requirements, use fgetcontents
+	protected $supportedAdapter = array(
 		'buzzhttpadapter',
 		'curlhttpadapter',
 		'guzzlehttpadapter',
@@ -68,8 +70,8 @@ class IndexConfigurator {
 
 	/**
 	 * @var array
-	 * */
-	private $supportedProvider = array(
+	 */
+	protected $supportedProvider = array(
 		'googlemapsprovider',
 		'googlemapsbusinessprovider',
 		'openstreetmapprovider'
@@ -78,26 +80,26 @@ class IndexConfigurator {
 	/**
 	 * @var \Geocoder\HttpAdapter\HttpAdapterInterface
 	*/
-	private $adapter;
+	protected $adapter;
 
 	/**
 	 * @var \Geocoder\Provider\ProviderInterface
 	 */
-	private $provider;
+	protected $provider;
 
 	/**
 	 * @var array
 	 * */
-	private $locationList = array();
+	protected $locationList = array();
 
 
 	/**
-	 * @param \tx_solr_Site $site
+	 * @param \Tx_Solr_Site $site
 	 */
-	public function __construct(\tx_solr_Site $site) {
+	public function __construct(\Tx_Solr_Site $site) {
 		$this->site = $site;
-		$this->setAdapter();
-		$this->setProvider();
+		$this->initializeAdapter();
+		$this->initializeProvider();
 	}
 
 	/**
@@ -111,29 +113,27 @@ class IndexConfigurator {
 	 * Sets the site configuration for EXT:solrgeo
 	 * */
 	public function checkSiteConfiguration() {
-		if(empty($this->siteConfiguration)) {
-			$objectManager =
-				\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-			$configurationManager =
-				$objectManager->get('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManagerInterface');
+		if (empty($this->siteConfiguration)) {
+			$objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+			$configurationManager = $objectManager->get('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManagerInterface');
 
-			$configuration =
-				$configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+			$configuration = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
 			$this->siteConfiguration = $configuration['plugin.']['tx_solrgeo.'];
 		}
 	}
 
 	/**
-	 * Sets the adapter
+	 * Initializes the adapter
 	 */
-	private function setAdapter() {
+	protected function initializeAdapter() {
 		// Default Adapter
 		$adapterName = self::DEFAULT_ADAPTER;
 		$this->checkSiteConfiguration();
 
-		if(isset($this->siteConfiguration['index.']['adapter'])) {
+		if (isset($this->siteConfiguration['index.']['adapter'])) {
 			$adapterName = strtolower($this->siteConfiguration['index.']['adapter']);
-			if(!in_array($adapterName, $this->supportedAdapter)) {
+			if (!in_array($adapterName, $this->supportedAdapter)) {
+				// FIXME should rather throw an exception
 				$adapterName = self::DEFAULT_ADAPTER;
 			}
 		}
@@ -153,7 +153,7 @@ class IndexConfigurator {
 				break;
 			case 'curlhttpadapter':
 			default:
-				$adapter  = new \Geocoder\HttpAdapter\CurlHttpAdapter();
+				$adapter = new \Geocoder\HttpAdapter\CurlHttpAdapter();
 				break;
 		}
 
@@ -168,38 +168,28 @@ class IndexConfigurator {
 		return $this->adapter;
 	}
 
-
-
 	/**
-	 * Sets the provider
+	 * Initializes the provider
 	 */
-	private function setProvider() {
+	protected function initializeProvider() {
 		// Default Provider
 		$providerName = self::DEFAULT_PROVIDER;
-		$provider = null;
+		$provider     = null;
 		$this->checkSiteConfiguration();
 
-		if(!empty($this->siteConfiguration['index.']['provider.'])) {
+		if (!empty($this->siteConfiguration['index.']['provider.'])) {
 			$providerName = strtolower($this->siteConfiguration['index.']['provider.']['name']);
-			if(!in_array($providerName, $this->supportedProvider)) {
+			if (!in_array($providerName, $this->supportedProvider)) {
+				// FIXME should rather throw an exception
 				$providerName = self::DEFAULT_PROVIDER;
 			}
 		}
 
-		$locale = (isset($this->siteConfiguration['index.']['provider.']['locale'])) ?
-			$this->siteConfiguration['index.']['provider.']['locale'] : null;
-		$region = (isset($this->siteConfiguration['index.']['provider.']['region'])) ?
-			$this->siteConfiguration['index.']['provider.']['region'] : null;
-		$useSsl = false;
-		if(isset($this->siteConfiguration['index.']['provider.']['useSsl'])) {
-			if($this->siteConfiguration['index.']['provider.']['useSsl'] == '1') {
-				$useSsl = true;
-			}
-		}
-		$clientId = (isset($this->siteConfiguration['index.']['provider.']['clientId'])) ?
-			$this->siteConfiguration['index.']['provider.']['clientId'] : null;
-		$privateKey = (isset($this->siteConfiguration['index.']['provider.']['privateKey'])) ?
-			$this->siteConfiguration['index.']['provider.']['privateKey'] : null;
+		$locale     = $this->siteConfiguration['index.']['provider.']['locale'] ?: null;
+		$region     = $this->siteConfiguration['index.']['provider.']['region'] ?: null;
+		$useSsl     = (bool) $this->siteConfiguration['index.']['provider.']['useSsl'];
+		$clientId   = $this->siteConfiguration['index.']['provider.']['clientId'] ?: null;
+		$privateKey = $this->siteConfiguration['index.']['provider.']['privateKey'] ?: null;
 
 		$this->provider = $this->createProvider($providerName, $locale, $region, $useSsl, $clientId, $privateKey);
 	}
@@ -227,22 +217,22 @@ class IndexConfigurator {
 	 *
 	 * @return \Geocoder\Provider\ProviderInterface
 	 */
-	public function createProvider($providerName, $locale = null, $region = null, $useSsl = false,
-								   $clientId = null, $privateKey= null) {
+	public function createProvider($providerName, $locale = null, $region = null, $useSsl = false, $clientId = null, $privateKey= null) {
 		$provider = null;
 		switch ($providerName) {
 			case 'openstreetmapprovider';
 				$provider = new \Geocoder\Provider\OpenStreetMapProvider($this->getAdapter(), $locale);
 				break;
 			case 'googlemapsbusinessprovider';
-				if($clientId == null || $clientId == '') {
+				if ($clientId == null || $clientId == '') {
 					throw new \InvalidArgumentException(
-						'For using GoogleMapsBusinessProvider please ensure that your Client ID is valid (e.g. not null, not empty, ...)',
-						1393405937);
-				}
-				else {
+						'To use GoogleMapsBusinessProvider please ensure that your Client ID is valid (e.g. not null, not empty, ...)',
+						1393405937
+					);
+				} else {
 					$provider = new \Geocoder\Provider\GoogleMapsBusinessProvider(
-									$this->getAdapter(), $clientId, $privateKey, $locale, $region, $useSsl);
+						$this->getAdapter(), $clientId, $privateKey, $locale, $region, $useSsl
+					);
 				}
 				break;
 			case 'googlemapsprovider';
@@ -250,6 +240,7 @@ class IndexConfigurator {
 				$provider = new \Geocoder\Provider\GoogleMapsProvider($this->getAdapter(), $locale, $region, $useSsl);
 				break;
 		}
+
 		return $provider;
 	}
 
@@ -258,45 +249,49 @@ class IndexConfigurator {
 	 * Required values are the uid of a page/tca-table and the city.
 	 */
 	public function setLocationList() {
-		if(!empty($this->siteConfiguration['index.']['geocode.'])) {
+		if (!empty($this->siteConfiguration['index.']['geocode.'])) {
 			$configuredLocations = $this->siteConfiguration['index.']['geocode.'];
 			$locationList = array();
+
 			foreach ($configuredLocations as $table => $locations) {
 				// per table
-				$table = str_replace(".","",$table);
-				if($table == 'files' || $table == 'file') {
+				$table = str_replace(".", "", $table);
+				if ($table == 'files' || $table == 'file') {
 					$table = 'tx_solr_file';
 				}
+
 				foreach ($locations as $location) {
-					if(!isset($location['uid'])) {
+					if (!isset($location['uid'])) {
 						throw new \BadMethodCallException(
-							'Required field uid for "plugin.tx_solrgeo.index.geocode.'.$table.'" is missing',
-							1392978390);
-					}
-					else if(!isset($location['city'])) {
+							'Required field uid for "plugin.tx_solrgeo.index.geocode.' . $table . '" is missing',
+							1392978390
+						);
+					} elseif (!isset($location['city'])) {
 						throw new \BadMethodCallException(
-							'Required field city for "plugin.tx_solrgeo.index.geocode.'.$table.'" is missing',
-							1392978390);
+							'Required field city for "plugin.tx_solrgeo.index.geocode.' . $table . '" is missing',
+							1392978390
+						);
 					}
 
-					$uidList 		= \TYPO3\CMS\Core\Utility\GeneralUtility::trimExplode(',', $location['uid']);
-					$city 			= trim($location['city']);
-					$address 		= (isset($location['address'])) ? trim($location['address']) : '';
-					$country 		= (isset($location['country'])) ? trim($location['country']) : '';
-					$geolocation 	= (isset($location['geolocation'])) ? trim($location['geolocation']) : '';
+					$uidList     = GeneralUtility::trimExplode(',', $location['uid']);
+					$city        = trim($location['city']);
+					$address     = trim($location['address']) ?: '';
+					$country     = trim($location['country']) ?: '';
+					$geolocation = trim($location['geolocation']) ?: '';
 
 					foreach($uidList as $uid) {
-						$tmp = array();
-						$tmp['type'] = $table;
-						$tmp['uid'] = $uid;
-						$tmp['city'] = $city;
-						$tmp['address'] = $address;
-						$tmp['country'] = $country;
-						$tmp['geolocation'] = $geolocation;
-						$locationList[] = $tmp;
+						$locationList[] = array(
+							'type'        => $table,
+							'uid'         => $uid,
+							'city'        => $city,
+							'address'     => $address,
+							'country'     => $country,
+							'geolocation' => $geolocation
+						);
 					}
 				}
 			}
+
 			$this->locationList = $locationList;
 		}
 

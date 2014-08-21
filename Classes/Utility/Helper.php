@@ -25,6 +25,10 @@ namespace TYPO3\Solrgeo\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
+
+
 /**
  *
  *
@@ -37,47 +41,53 @@ class Helper {
 	/**
 	 * @var array
 	 */
-	private $configuration = array();
+	protected $configuration = array();
 
 	/**
 	 * @var string
 	 */
-	private $domain = "";
+	protected $domain = '';
 
 	/**
 	 * The search query
 	 *
 	 * @var \Tx_Solr_Query
 	 */
-	private $query = NULL;
+	protected $query = NULL;
 
 	/**
 	 * The Site
 	 *
 	 * @var \Tx_Solr_Site
 	 */
-	private $site = NULL;
+	protected $site = NULL;
 
 	/**
 	 * @var \TYPO3\Solrgeo\Service\GeoCoderService
 	 */
-	private $geocoder = NULL;
+	protected $geocoder = NULL;
 
 
+	/**
+	 * Constructor
+	 *
+	 */
 	public function __construct() {
-		$this->setDomain();
-		$this->setConfiguration();
-		$this->setSolrSite();
-		$this->prepareForGeocoderService();
+		$this->initializeDomain();
+		$this->initializeConfiguration();
+		$this->initializeSolrSite();
+		$this->initializeGeoCoderService();
 	}
 
 	/**
-	 * Sets the domain
+	 * Initializes the domain
+	 *
 	 */
-	private function setDomain() {
-		$sys_page = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_pageSelect');
+	protected function initializeDomain() {
+		$sys_page = GeneralUtility::makeInstance('t3lib_pageSelect');
 		$rootLine = $sys_page->getRootLine($GLOBALS['TSFE']->id);
-		$sys_befunc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('t3lib_BEfunc');
+		$sys_befunc = GeneralUtility::makeInstance('t3lib_BEfunc');
+
 		$this->domain = $sys_befunc->firstDomainRecord($rootLine);
 	}
 
@@ -87,35 +97,37 @@ class Helper {
 	 * @return string
 	 */
 	public function getDomain() {
-		if($this->domain == '') {
-			$this->setDomain();
+		if ($this->domain == '') {
+			$this->initializeDomain();
 		}
+
 		return $this->domain;
 	}
 
 	/**
-	 * Sets the TS Configuration
+	 * Initializes the TS Configuration
+	 *
 	 */
-	public function setConfiguration() {
-		$objectManager =
-			\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-		$configurationManager =
-			$objectManager->get('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManagerInterface');
+	protected function initializeConfiguration() {
+		$objectManager        = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
+		$configurationManager = $objectManager->get('TYPO3\\CMS\\Extbase\\Configuration\\ConfigurationManagerInterface');
 
-		$this->configuration =
-			$configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+		$this->configuration = $configurationManager->getConfiguration(
+			ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT
+		);
 	}
 
 	/**
-	 * Returns the TS configuration from given extension key
+	 * Returns the TS configuration for a given extension key
 	 *
 	 * @param string $extensionKey
 	 * @return array
 	 */
 	public function getConfiguration($extensionKey) {
 		if(empty($this->configuration)) {
-			$this->setConfiguration();
+			$this->initializeConfiguration();
 		}
+
 		return $this->configuration['plugin.'][$extensionKey.'.'];
 	}
 
@@ -136,9 +148,10 @@ class Helper {
 	/**
 	 * Sets the Solr Site
 	 */
-	private function setSolrSite() {
+	protected function initializeSolrSite() {
 		$sites = \Tx_solr_Site::getAvailableSites();
 		$site = array_shift($sites);
+
 		$this->site = $site;
 	}
 
@@ -152,22 +165,23 @@ class Helper {
 	/**
 	 *  Prepare same values for the geocoding process
 	 */
-	private function prepareForGeocoderService() {
-		$solrGeoConfig = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+	protected function initializeGeoCoderService() {
+		$solrGeoConfig = GeneralUtility::makeInstance(
 			'TYPO3\\Solrgeo\\Configuration\\IndexConfigurator',
-			$this->getSolrSite());
+			$this->getSolrSite()
+		);
 		$solrGeoConfig->setConfiguration($this->getConfiguration('tx_solrgeo'));
 		$solrGeoConfig->setLocationList();
 
 		$this->locationCount = count($solrGeoConfig->getLocationList());
 
-		$geocoder = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(
+		$geoCoder = GeneralUtility::makeInstance(
 			'TYPO3\\Solrgeo\\Service\\GeoCoderService',
-			$solrGeoConfig->getProvider());
+			$solrGeoConfig->getProvider()
+		);
+		$geoCoder->setLocationList($solrGeoConfig->getLocationList());
 
-		$geocoder->setLocationList($solrGeoConfig->getLocationList());
-
-		$this->geocoder = $geocoder;
+		$this->geocoder = $geoCoder;
 	}
 
 	/**

@@ -25,15 +25,17 @@ namespace TYPO3\Solrgeo\Tasks;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use \TYPO3\CMS\Scheduler\Task\AbstractTask;
+
 
 /**
  * Task for GeoCoding
  *
- * @package	solrgeo
+ * @package solrgeo
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class GeoCoderTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask {
+class GeoCoderTask extends AbstractTask {
 
 	/**
 	 * This is the main method that is called when a task is executed
@@ -46,9 +48,10 @@ class GeoCoderTask extends \TYPO3\CMS\Scheduler\Task\AbstractTask {
 	 */
 	public function execute() {
 		/** @var $helper \TYPO3\Solrgeo\Utility\Helper */
-		$helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
-		$geocoder = $helper->getGeoCoder();
-		$geocoder->processGeocoding($helper->getSolrSite());
+		$helper = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
+		$geoCoder = $helper->getGeoCoder();
+		$geoCoder->processGeoCoding($helper->getSolrSite());
+
 		return TRUE;
 	}
 }

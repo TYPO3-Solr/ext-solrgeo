@@ -25,6 +25,10 @@ namespace TYPO3\Solrgeo\ViewHelpers;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+
+
 /**
  *
  *
@@ -32,77 +36,87 @@ namespace TYPO3\Solrgeo\ViewHelpers;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class ResultLinkViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper{
+class ResultLinkViewHelper extends AbstractViewHelper{
 
 	/**
 	 * render a customized link
 	 *
 	 * @param array $array
 	 * @param string $keyword
-	 * @param string $linktype
-	 * @param string $lng
+	 * @param string $linkType
+	 * @param integer $languageId
 	 * @return string
 	 */
-	public function render($array, $keyword, $linktype = NULL, $lng = NULL) {
+	public function render($array, $keyword, $linkType = NULL, $languageId = NULL) {
 		$link = '';
-		$cObj = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tslib_cObj');
-		if(!empty($array)) {
-			if($linktype == 'resultentry') {
-				$linkConfiguration = array(
-					'useCacheHash'     => FALSE,
-					'no_cache'         => FALSE,
-					'parameter'        =>  ($array['type'] == 'tx_solr_file') ? $array['fileRelativePath'] : $array['uid']
-				);
-				$link = $cObj->typoLink($array['title'], $linkConfiguration);
+		$cObj = GeneralUtility::makeInstance('tslib_cObj');
+
+		if (!empty($array)) {
+		// FIXME FUCKING use a switch/case
+
+			switch ($linkType) {
+				case 'resultentry':
+					$linkConfiguration = array(
+						'useCacheHash' => FALSE,
+						'no_cache'     => FALSE,
+						'parameter'    =>  ($array['type'] == 'tx_solr_file') ? $array['fileRelativePath'] : $array['uid']
+					);
+					$link = $cObj->typoLink($array['title'], $linkConfiguration);
+					break;
+				case 'distancefilter':
+					$linkConfiguration = array(
+						'useCacheHash'     => FALSE,
+						'no_cache'         => FALSE,
+						'parameter'        => $GLOBALS['TSFE']->id,
+						'additionalParams' => '&tx_solrgeo_search[q]=' . $keyword . '&L=' . $languageId
+					);
+					$link = $cObj->typoLink($GLOBALS['TSFE']->sL(
+						'LLL:EXT:solrgeo/Resources/Private/Language/locallang_search.xml:tx_solrgeo.default') .
+							' (0-' . $array[0] . ' km)',
+						$linkConfiguration
+					);
+					break;
+				case 'distancerange':
+					$linkConfiguration = array(
+						'useCacheHash'     => FALSE,
+						'no_cache'         => FALSE,
+						'parameter'        => $GLOBALS['TSFE']->id,
+						'additionalParams' => '&tx_solrgeo_search[q]=' . $keyword . '&tx_solrgeo_search[r]=' . $array['value'] . '&L=' . $languageId
+					);
+					$link = $cObj->typoLink($array['value'].' km', $linkConfiguration);
+					break;
+				case 'city-facet':
+					$linkConfiguration = array(
+						'useCacheHash'     => FALSE,
+						'no_cache'         => FALSE,
+						'parameter'        => $GLOBALS['TSFE']->id,
+						'additionalParams' => '&tx_solrgeo_search[q]=' . $array['city'] . '&L=' . $languageId
+					);
+					$link = $cObj->typoLink($array['city'] . ' (' . $array['numFound'] . ')', $linkConfiguration);
+					break;
+				case 'country-facet':
+					$linkConfiguration = array(
+						'useCacheHash'     => FALSE,
+						'no_cache'         => FALSE,
+						'parameter'        => $GLOBALS['TSFE']->id,
+						'additionalParams' => '&tx_solrgeo_search[q]=country,' . $array['country'] . '&L=' . $languageId
+					);
+					$link = $cObj->typoLink($array['country'] . ' (' . $array['numFound'] . ')', $linkConfiguration);
+					break;
 			}
-			else if($linktype == 'distancefilter') {
-				$linkConfiguration = array(
-					'useCacheHash'     => FALSE,
-					'no_cache'         => FALSE,
-					'parameter'        => $GLOBALS['TSFE']->id,
-					'additionalParams' => '&tx_solrgeo_search[q]='.$keyword.'&L='.$lng
-				);
-				$link = $cObj->typoLink($GLOBALS['TSFE']->sL('LLL:EXT:solrgeo/Resources/Private/Language/locallang_search.xml:tx_solrgeo.default').
-							' (0-'.$array[0].' km)', $linkConfiguration);
-			}
-			else if($linktype == 'distancerange') {
-				$linkConfiguration = array(
-					'useCacheHash'     => FALSE,
-					'no_cache'         => FALSE,
-					'parameter'        => $GLOBALS['TSFE']->id,
-					'additionalParams' => '&tx_solrgeo_search[q]='.$keyword.'&tx_solrgeo_search[r]='.$array['value'].'&L='.$lng
-				);
-				$link = $cObj->typoLink($array['value'].' km', $linkConfiguration);
-			}
-			else if($linktype == 'city-facet') {
-				$linkConfiguration = array(
-					'useCacheHash'     => FALSE,
-					'no_cache'         => FALSE,
-					'parameter'        => $GLOBALS['TSFE']->id,
-					'additionalParams' => '&tx_solrgeo_search[q]='.$array['city'].'&L='.$lng
-				);
-				$link = $cObj->typoLink($array['city'].' ('.$array['numFound'].')', $linkConfiguration);
-			}
-			else if($linktype == 'country-facet') {
-				$linkConfiguration = array(
-					'useCacheHash'     => FALSE,
-					'no_cache'         => FALSE,
-					'parameter'        => $GLOBALS['TSFE']->id,
-					'additionalParams' => '&tx_solrgeo_search[q]=country,'.$array['country'].'&L='.$lng
-				);
-				$link = $cObj->typoLink($array['country'].' ('.$array['numFound'].')', $linkConfiguration);
-			}
-		}
-		else if($linktype == 'removefilter') {
+		} elseif ($linkType == 'removefilter') {
 			$linkConfiguration = array(
 				'useCacheHash'     => FALSE,
 				'no_cache'         => FALSE,
 				'parameter'        => $GLOBALS['TSFE']->id,
-				'additionalParams' => '&tx_solrgeo_search[q]='.$keyword.'&L='.$lng
+				'additionalParams' => '&tx_solrgeo_search[q]=' . $keyword . '&L=' . $languageId
 			);
-			$link = $cObj->typoLink($GLOBALS['TSFE']->sL('LLL:EXT:solrgeo/Resources/Private/Language/locallang_search.xml:tx_solrgeo.faceting_removeFilter'),
-						$linkConfiguration);
+			$link = $cObj->typoLink($GLOBALS['TSFE']->sL(
+				'LLL:EXT:solrgeo/Resources/Private/Language/locallang_search.xml:tx_solrgeo.faceting_removeFilter'),
+				$linkConfiguration
+			);
 		}
+
 		return $link;
 	}
 }

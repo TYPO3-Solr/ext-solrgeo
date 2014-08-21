@@ -23,22 +23,16 @@ namespace TYPO3\Solrgeo\ViewHelpers;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-/**
- * InlineSettingViewHelper.
- *
- * @package    TYPO3
- * @subpackage tx_dkdviewhelper
- * @author     Timo Webler <timo.webler@dkd.de>
- * @version    Release: $Id: InlineSettingViewHelper.php 10411 2012-03-22 10:14:29Z webl001 $
- */
+use TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper;
+
 
 /**
  * InlineSettingViewHelper.
  *
  * @package solrgeo
- * @author     Timo Webler <timo.webler@dkd.de>
+ * @author Timo Webler <timo.webler@dkd.de>
  */
-class JavascriptInlineSettingViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper\AbstractViewHelper{
+class JavascriptInlineSettingViewHelper extends AbstractViewHelper{
 
 	/**
 	 * Add inline settings to page renderer.
@@ -51,19 +45,21 @@ class JavascriptInlineSettingViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper
 	 * @return void
 	 */
 	public function render($namespace, $key = NULL, $value = NULL, array $array = NULL, $addNamespace = TRUE) {
-		/* @var $pageRenderer t3lib_PageRenderer */
+		/* @var $pageRenderer \t3lib_PageRenderer */
 		$pageRenderer = $GLOBALS['TSFE']->getPageRenderer();
 
 		if ($addNamespace) {
 			$namespaceParts = explode('.', $namespace);
 			$javascript = '';
 			$currentNamespace = array();
+
 			foreach ($namespaceParts as $part) {
 				$currentNamespace[] = $part;
 				$javascript .= 'if (typeof(' . implode('.', $currentNamespace) . ') == "undefined") { ' .
 					implode('.', $currentNamespace) . ' = {};}' . LF;
 			}
-			// Add namespace Konfiguration
+
+			// Add namespace Configuration
 			$pageRenderer->addJsInlineCode($namespace . '_Namespace', $javascript, FALSE, TRUE);
 		}
 
@@ -74,10 +70,10 @@ class JavascriptInlineSettingViewHelper extends \TYPO3\CMS\Fluid\Core\ViewHelper
 		} else {
 			$configuration[$key] = $value;
 		}
+
 		$pageRenderer->addJsInlineCode(
 			$namespace . '_' . md5(serialize($configuration)),
 			$namespace . ' = ' . json_encode($configuration) . ';'
 		);
 	}
 }
-?>

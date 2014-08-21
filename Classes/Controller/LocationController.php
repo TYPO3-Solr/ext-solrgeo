@@ -25,6 +25,10 @@ namespace TYPO3\Solrgeo\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\Solrgeo\Domain\Model\Location;
+
+
 /**
  *
  *
@@ -32,7 +36,7 @@ namespace TYPO3\Solrgeo\Controller;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class LocationController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
+class LocationController extends ActionController {
 
 	/**
 	 * locationRepository
@@ -42,8 +46,9 @@ class LocationController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 	 */
 	protected $locationRepository;
 
+
 	/**
-	 * action list
+	 * list action
 	 *
 	 * @return void
 	 */
@@ -53,80 +58,70 @@ class LocationController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControl
 	}
 
 	/**
-	 * action show
+	 * Show action
 	 *
 	 * @param \TYPO3\Solrgeo\Domain\Model\Location $location
 	 * @return void
 	 */
-	public function showAction(\TYPO3\Solrgeo\Domain\Model\Location $location) {
+	public function showAction(Location $location) {
 		$this->view->assign('location', $location);
 	}
 
 	/**
-	 * action new
+	 * New action
 	 *
 	 * @param \TYPO3\Solrgeo\Domain\Model\Location $newLocation
 	 * @dontvalidate $newLocation
 	 * @return void
 	 */
-	public function newAction(\TYPO3\Solrgeo\Domain\Model\Location $newLocation = NULL) {
+	public function newAction(Location $newLocation = NULL) {
 		$this->view->assign('newLocation', $newLocation);
 	}
 
 	/**
-	 * action create
+	 * Create action
 	 *
 	 * @param \TYPO3\Solrgeo\Domain\Model\Location $newLocation
 	 * @return void
 	 */
-	public function createAction(\TYPO3\Solrgeo\Domain\Model\Location $newLocation) {
+	public function createAction(Location $newLocation) {
 		$this->locationRepository->add($newLocation);
 		$this->flashMessageContainer->add('Your new Location was created.');
 		$this->redirect('list');
 	}
 
 	/**
-	 * action edit
+	 * Edit action
 	 *
 	 * @param \TYPO3\Solrgeo\Domain\Model\Location $location
 	 * @return void
 	 */
-	public function editAction(\TYPO3\Solrgeo\Domain\Model\Location $location) {
+	public function editAction(Location $location) {
 		$this->view->assign('location', $location);
 	}
 
 	/**
-	 * action update
+	 * Update action
 	 *
 	 * @param \TYPO3\Solrgeo\Domain\Model\Location $location
 	 * @return void
 	 */
-	public function updateAction(\TYPO3\Solrgeo\Domain\Model\Location $location) {
+	public function updateAction(Location $location) {
 		$this->locationRepository->update($location);
 		$this->flashMessageContainer->add('Your Location was updated.');
 		$this->redirect('list');
 	}
 
 	/**
-	 * action delete
+	 * Delete action
 	 *
 	 * @param \TYPO3\Solrgeo\Domain\Model\Location $location
 	 * @return void
 	 */
-	public function deleteAction(\TYPO3\Solrgeo\Domain\Model\Location $location) {
+	public function deleteAction(Location $location) {
 		$this->locationRepository->remove($location);
 		$this->flashMessageContainer->add('Your Location was removed.');
 		$this->redirect('list');
 	}
 
-	/**
-	 * action
-	 *
-	 * @return void
-	 */
-	public function Action() {
-
-	}
-
 }
-?>

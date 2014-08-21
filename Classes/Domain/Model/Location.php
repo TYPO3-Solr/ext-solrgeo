@@ -25,6 +25,9 @@ namespace TYPO3\Solrgeo\Domain\Model;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
+
+
 /**
  *
  *
@@ -32,54 +35,55 @@ namespace TYPO3\Solrgeo\Domain\Model;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
+class Location extends AbstractEntity {
 
 	/**
 	 * address
 	 *
-	 * @var \string
+	 * @var string
 	 */
 	protected $address;
 
 	/**
 	 * zip
 	 *
-	 * @var \string
+	 * @var string
 	 */
 	protected $zip;
 
 	/**
 	 * region
 	 *
-	 * @var \string
+	 * @var string
 	 */
 	protected $region;
 
 	/**
 	 * country
 	 *
-	 * @var \string
+	 * @var string
 	 */
 	protected $country;
 
 	/**
 	 * city
 	 *
-	 * @var \string
+	 * @var string
 	 */
 	protected $city;
 
 	/**
-	 * geolocation
+	 * geo location
 	 *
-	 * @var \string
+	 * @var string
 	 */
 	protected $geolocation;
+
 
 	/**
 	 * Returns the address
 	 *
-	 * @return \string $address
+	 * @return string $address
 	 */
 	public function getAddress() {
 		return $this->address;
@@ -88,7 +92,7 @@ class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Sets the address
 	 *
-	 * @param \string $address
+	 * @param string $address
 	 * @return void
 	 */
 	public function setAddress($address) {
@@ -98,7 +102,7 @@ class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Returns the zip
 	 *
-	 * @return \string $zip
+	 * @return string $zip
 	 */
 	public function getZip() {
 		return $this->zip;
@@ -107,7 +111,7 @@ class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Sets the zip
 	 *
-	 * @param \string $zip
+	 * @param string $zip
 	 * @return void
 	 */
 	public function setZip($zip) {
@@ -117,7 +121,7 @@ class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Returns the region
 	 *
-	 * @return \string $region
+	 * @return string $region
 	 */
 	public function getRegion() {
 		return $this->region;
@@ -126,7 +130,7 @@ class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Sets the region
 	 *
-	 * @param \string $region
+	 * @param string $region
 	 * @return void
 	 */
 	public function setRegion($region) {
@@ -136,7 +140,7 @@ class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Returns the country
 	 *
-	 * @return \string $country
+	 * @return string $country
 	 */
 	public function getCountry() {
 		return $this->country;
@@ -145,7 +149,7 @@ class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Sets the country
 	 *
-	 * @param \string $country
+	 * @param string $country
 	 * @return void
 	 */
 	public function setCountry($country) {
@@ -155,7 +159,7 @@ class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Returns the city
 	 *
-	 * @return \string $city
+	 * @return string $city
 	 */
 	public function getCity() {
 		return $this->city;
@@ -164,7 +168,7 @@ class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Sets the city
 	 *
-	 * @param \string $city
+	 * @param string $city
 	 * @return void
 	 */
 	public function setCity($city) {
@@ -174,7 +178,7 @@ class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Returns the geolocation
 	 *
-	 * @return \string $geolocation
+	 * @return string $geolocation
 	 */
 	public function getGeolocation() {
 		return $this->geolocation;
@@ -183,7 +187,7 @@ class Location extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity {
 	/**
 	 * Sets the geolocation
 	 *
-	 * @param \string $geolocation
+	 * @param string $geolocation
 	 * @return void
 	 */
 	public function setGeolocation($geolocation) {

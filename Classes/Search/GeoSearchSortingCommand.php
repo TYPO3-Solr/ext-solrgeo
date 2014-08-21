@@ -24,6 +24,7 @@ namespace TYPO3\Solrgeo\Search;
  *
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  *
@@ -40,24 +41,25 @@ class GeoSearchSortingCommand extends \Tx_Solr_PiResults_SortingCommand {
 	 * @return array
 	 */
 	protected function getSortingLinks() {
-		$helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
+		$helper = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
 		$settings = $helper->getConfiguration('tx_solrgeo');
 
 		$sortOptions = parent::getSortingLinks();
-		foreach($sortOptions as $k => $sortOption) {
-			foreach($sortOption as $key => $value) {
-				if($key == 'optionName' && $value == 'geosearch') {
-					if(!empty($settings['search.']['targetPageId'])) {
+		foreach ($sortOptions as $k => $sortOption) {
+			foreach ($sortOption as $key => $value) {
+				if ($key == 'optionName' && $value == 'geosearch') {
+					if (!empty($settings['search.']['targetPageId'])) {
 						$query = $this->search->getQuery();
 						$tmp = $sortOption;
 						unset($sortOptions[$k]);
+
 						$linkConfiguration = array(
 							'useCacheHash'     => FALSE,
 							'no_cache'         => FALSE,
 							'parameter'        => $settings['search.']['targetPageId'],
 							'additionalParams' => '&tx_solrgeo_search[q]='.$query->getKeywordsRaw()
 						);
-						$cObj=\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tslib_cObj');
+						$cObj= GeneralUtility::makeInstance('tslib_cObj');
 						$tmp['link'] = $cObj->typoLink($tmp['label'], $linkConfiguration);
 						$sortOptions[] = $tmp;
 					}

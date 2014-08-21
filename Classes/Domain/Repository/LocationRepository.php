@@ -25,6 +25,10 @@ namespace TYPO3\Solrgeo\Domain\Repository;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Persistence\Repository;
+
+
 /**
  *
  *
@@ -32,10 +36,10 @@ namespace TYPO3\Solrgeo\Domain\Repository;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class LocationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
+class LocationRepository extends Repository {
 
 	/**
-	 * Sets the querysettings global
+	 * Sets the query settings global
 	 */
 	public function initializeObject() {
     	/** @var $querySettings \TYPO3\CMS\Extbase\Persistence\Generic\Typo3QuerySettings */
@@ -55,32 +59,33 @@ class LocationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 	 */
 	public function findByConfiguredLocation($location) {
 		$query = $this->createQuery();
-		$query->setLimit((integer)1);
+		$query->setLimit(1);
 
-		if($location['geolocation'] == '') {
+		if ($location['geolocation'] == '') {
 			$query->matching(
 				$query->logicalAnd(
-					$query->equals('city',$location['city']),
-					$query->equals('address',$location['address'])
+					$query->equals('city', $location['city']),
+					$query->equals('address', $location['address'])
 				)
 			);
+		} else {
+			$query->matching($query->equals('geolocation', $location['geolocation']));
 		}
-		else {
-			$query->matching($query->equals('geolocation',$location['geolocation']));
-		}
+
 		return $query->execute();
 	}
 
 	/**
-	 * Finds a record by geolocation
+	 * Finds a record by geo location
 	 *
-	 * @param string $geolocation
+	 * @param string $geoLocation
 	 * @return \TYPO3\CMS\Extbase\Persistence\QueryResultInterface
 	 */
-	public function findByGeoLocation($geolocation) {
+	public function findByGeoLocation($geoLocation) {
 		$query = $this->createQuery();
-		$query->setLimit((integer)1);
-		$query->matching($query->equals('geolocation',$geolocation));
+		$query->setLimit(1);
+		$query->matching($query->equals('geolocation', $geoLocation));
+
 		return $query->execute();
 	}
 
@@ -91,12 +96,12 @@ class LocationRepository extends \TYPO3\CMS\Extbase\Persistence\Repository {
 	 * @return \TYPO3\Solrgeo\Domain\Model\Location
 	 */
 	public function createLocation($location) {
-		$locationObject = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Domain\\Model\\Location');
+		$locationObject = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Domain\\Model\\Location');
 		$locationObject->setPid($location['uid']);
 		$locationObject->setAddress($location['address']);
 		$locationObject->setZip($location['zip']);
+
 		return $locationObject;
 	}
 
 }
-?>

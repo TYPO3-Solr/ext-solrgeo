@@ -40,7 +40,7 @@ class GeoSearch extends \Tx_Solr_Search {
 	 *
 	 * @param \Tx_Solr_SolrService $solrConnection
 	 */
-	public function setSolrconnetion($solrConnection) {
+	public function setSolrConnection($solrConnection) {
 		$this->solr = $solrConnection;
 	}
 }

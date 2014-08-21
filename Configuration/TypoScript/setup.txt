@@ -1,3 +1,4 @@
+// FIXME must not add global default css
 page.includeCSS {
 	file1 = EXT:solr/Resources/Css/PiResults/results.css
 	file2 = EXT:solrgeo/Resources/Public/Stylesheets/search.css
@@ -36,18 +37,21 @@ plugin.tx_solrgeo {
 		partialRootPath = {$plugin.tx_solrgeo.view.partialRootPath}
 		layoutRootPath = {$plugin.tx_solrgeo.view.layoutRootPath}
 	}
+
 	persistence {
 		storagePid = {$plugin.tx_solrgeo.persistence.storagePid}
 	}
+
 	features {
-		# uncomment the following line to enable the new Property Mapper.
-		# rewrittenPropertyMapper = 1
+
 	}
 
 	index {
 		# Supported adapters:
 		# BuzzHttpAdapter, CurlHttpAdapter, GuzzleHttpAdapter, SocketHttpAdapter, ZendHttpAdapter
 		# For using Buzz, Guzzle and Zend please ensure you have installed the respectively libraries
+
+		// TODO add fgetcontents adapter, use by default. Must not rely on curl
 		adapter = CurlHttpAdapter
 
 		# Optional parameters for supported providers:
@@ -55,6 +59,7 @@ plugin.tx_solrgeo {
 		# GoogleMapsBusinessProvider extend GoogleMapsProvider: clientId (required), privateKey
 		# OpenStreetMapProvider: locale
 		provider {
+			// TODO default to US?
 			name = GoogleMapsProvider
 			locale = de_DE
 			region = Germany
@@ -64,9 +69,10 @@ plugin.tx_solrgeo {
 		geocode {
 
 			# Required fields: uid, city
-            # Optional fields: address, geolocation
+			# Optional fields: address, geolocation
 
 			pages {
+				// TODO remove examples, move into example TS file/configuration
 				1 {
 					uid = 3, 51
 					city = Frankfurt
@@ -83,10 +89,9 @@ plugin.tx_solrgeo {
 					city = Frankfurt
 					address = Kaiserstr. 73
 				}
-
 			}
 
-			# this are the indexed files with EXT:solrfile or EXT:solrfal
+			# these are files indexed by EXT:solrfile or EXT:solrfal
 			files {
 				1 {
 					# This is the reference UID in the content element! (fileReferenceUid)
@@ -109,6 +114,7 @@ plugin.tx_solrgeo {
 		}
 	}
 
+	// TODO move this into plugin.tx_solr.geosearch
 	search {
 		# Needed if you will link from EXT:solr to EXT:solrgeo.
 		# TargetPageId is the id of page which includes the plugin
@@ -116,10 +122,13 @@ plugin.tx_solrgeo {
 
 		query {
 			filter {
+				// FIXME follow format as in EXT:solr name = field:value
+
 				# valid filters: geofilt (The distance filter, exact search) or bbox (Bounding-box filter, less exact search)
 				type = geofilt
 
 				# default distance to search from given address in kilometers
+				// FIXME rename to distance
 				d = 100
 			}
 
@@ -158,6 +167,8 @@ plugin.tx_solrgeo {
 				}
 			}
 
+			// TODO add region/state facet
+
 			country = 0
 			country {
 				sort {
@@ -171,15 +182,16 @@ plugin.tx_solrgeo {
 		}
 
 		results {
-        	# settings for cropping
-        	crop {
-        		maxLength = 200
-               	indicator = ...
-               	fullWords = 1
-        	}
-        }
+			# settings for cropping
+			// FIXME reuse from EXT:solr
+			crop {
+				maxLength = 200
+				indicator = ...
+				fullWords = 1
+			}
+		}
 
-		# The zoomfaktor for Google Maps
+		# The zoom factor for Google Maps
 		maps {
 			zoom {
 				city = 8

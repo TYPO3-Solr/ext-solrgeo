@@ -3,13 +3,17 @@ if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
-\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile($_EXTKEY, 'Configuration/TypoScript', 'solrgeo');
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addStaticFile(
+	$_EXTKEY,
+	'Configuration/TypoScript',
+	'Apache Solr - Geo Search'
+);
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_solrgeo_domain_model_location', 'EXT:solrgeo/Resources/Private/Language/locallang_csh_tx_solrgeo_domain_model_location.xlf');
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_solrgeo_domain_model_location');
 $TCA['tx_solrgeo_domain_model_location'] = array(
 	'ctrl' => array(
-		'title'	=> 'LLL:EXT:solrgeo/Resources/Private/Language/locallang_db.xlf:tx_solrgeo_domain_model_location',
+		'title' => 'LLL:EXT:solrgeo/Resources/Private/Language/locallang_db.xlf:tx_solrgeo_domain_model_location',
 		'label' => 'address',
 		'tstamp' => 'tstamp',
 		'crdate' => 'crdate',
@@ -37,7 +41,7 @@ $TCA['tx_solrgeo_domain_model_location'] = array(
 \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin(
 	$_EXTKEY,
 	'search',
-	'Geo-Search with Solr'
+	'Search: Spatial/Geo Search'
 );
 
 ?>

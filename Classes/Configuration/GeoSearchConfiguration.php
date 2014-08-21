@@ -103,21 +103,21 @@ class GeoSearchConfiguration {
 	protected $countryZoom = 4;
 
 	/**
-	 * @param string Distance
+	 * @param string $distance Distance
 	 */
 	public function setDistance($distance) {
 		$this->distance = $distance;
 	}
 
 	/**
-	 * @param string Filter type: geofilt oder bbox
+	 * @param string $filterType Filter type: geofilt oder bbox
 	 */
 	public function setFilterType($filterType) {
 		$this->filterType = $filterType;
 	}
 
 	/**
-	 * @param string Sort direction: asc or desc
+	 * @param string $direction Sort direction: asc or desc
 	 */
 	public function setSortDirection($direction) {
 		$this->direction = $direction;
@@ -288,7 +288,8 @@ class GeoSearchConfiguration {
 	}
 
 	/**
-	 * @param int $zoom
+	 * @param $cityZoom
+	 * @internal param int $zoom
 	 */
 	public function setCityZoom($cityZoom) {
 		$this->cityZoom = $cityZoom;

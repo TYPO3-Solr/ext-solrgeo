@@ -25,6 +25,11 @@ namespace TYPO3\Solrgeo\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
+use TYPO3\Solrgeo\Controller\FrontendGeoSearchController;
+
+
 /**
  *
  *
@@ -32,10 +37,10 @@ namespace TYPO3\Solrgeo\Controller;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
+class SearchController extends ActionController {
 
 	/**
-	 * @var \TYPO3\Solrgeo\Controller\FrontendGeoSearchController
+	 * @var FrontendGeoSearchController
 	 */
 	protected $geoSearchController;
 
@@ -79,6 +84,7 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 */
 	protected $countryFacetResults = array();
 
+
 	/**
 	 * Initializes the controller before invoking an action method.
 	 *
@@ -102,9 +108,11 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	* Initializes Solr
 	*/
 	protected function initializeSolr() {
-		$this->helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
-		$this->geoSearchController = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Controller\\FrontendGeoSearchController',
-			$this->helper->getSolrSite());
+		$this->helper = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
+		$this->geoSearchController = GeneralUtility::makeInstance(
+			'TYPO3\\Solrgeo\\Controller\\FrontendGeoSearchController',
+			$this->helper->getSolrSite()
+		);
 		$this->geoSearchController->initializeGeoSearchConfiguration();
 	}
 
@@ -112,11 +120,12 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 * Sets the language from Request-URI
 	 */
 	public function setRequestLanguage() {
-		$uri =  explode("&",$this->uriBuilder->getRequest()->getRequestUri());
-		foreach($uri as $param) {
-			if(\TYPO3\Solrgeo\Utility\String::startsWith($param,'L=')) {
-				$this->defaultLanguage = str_replace('L=','',$param);
-				if($this->defaultLanguage == '') {
+		$uri =  explode("&", $this->uriBuilder->getRequest()->getRequestUri());
+
+		foreach($uri as $parameter) {
+			if(GeneralUtility::isFirstPartOfStr($parameter, 'L=')) {
+				$this->defaultLanguage = str_replace('L=', '', $parameter);
+				if ($this->defaultLanguage == '') {
 					$this->defaultLanguage = 0;
 				}
 				break;
@@ -128,7 +137,7 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 * Checks the Solr status and initialize if not enable
 	 */
 	public function checkSolr() {
-		if(!$this->geoSearchController->getSolrstatus()) {
+		if(!$this->geoSearchController->getSolrStatus()) {
 			$this->geoSearchController->initialize($this->helper->getSolrSite()->getRootPageId(), $this->defaultLanguage);
 		}
 	}
@@ -137,67 +146,72 @@ class SearchController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 * Sets some values from search request
 	 * */
 	public function setValuesFromRequest() {
-		if($this->request->hasArgument('d')) {
+		if ($this->request->hasArgument('d')) {
 			$this->distance = $this->request->getArgument('d');
 		}
 
-		if($this->request->hasArgument('r')) {
+		if ($this->request->hasArgument('r')) {
 			$this->range = $this->request->getArgument('r');
 		}
 
 		$this->keyword = $this->request->getArgument('q');
-		$this->geoSearchController->setGeolocation($this->keyword);
+		$this->geoSearchController->setGeoLocation($this->keyword);
 
 		$this->geoSearchController->setHelper($this->helper);
-		$this->resultDocuments = $this->geoSearchController->searchByKeyword($this->keyword, $this->distance, $this->range);
+		$this->resultDocuments = $this->geoSearchController->searchByKeyword(
+			$this->keyword,
+			$this->distance,
+			$this->range
+		);
 		$this->cityFacetResults = $this->geoSearchController->getFacetGrouping(
 			$this->keyword,
-			\TYPO3\Solrgeo\Controller\FrontendGeoSearchController::CITY_FIELD,
-			$this->defaultLanguage);
+			FrontendGeoSearchController::CITY_FIELD,
+			$this->defaultLanguage
+		);
 		$this->countryFacetResults = $this->geoSearchController->getFacetGrouping(
 			$this->keyword,
-			\TYPO3\Solrgeo\Controller\FrontendGeoSearchController::COUNTRY_FIELD,
-			$this->defaultLanguage);
+			FrontendGeoSearchController::COUNTRY_FIELD,
+			$this->defaultLanguage
+		);
 	}
 
 	/**
 	 * Assigns the values to the search template
 	 */
 	public function assignValuesToSearchTemplate() {
-		if(\TYPO3\Solrgeo\Utility\String::startsWith($this->keyword, 'country,')) {
-			$countryKeyword = str_replace('country,','',$this->keyword);
+		if (GeneralUtility::isFirstPartOfStr($this->keyword, 'country,')) {
+			$countryKeyword = str_replace('country,', '', $this->keyword);
 			$this->keyword = '';
 		}
 
-		$geoSearchObject 	 = $this->geoSearchController->getGeoSearchObject();
+		$geoSearchObject     = $this->geoSearchController->getGeoSearchObject();
 		$googleMapsLocations = $this->geoSearchController->prepareSolrDocumentsForGoogleMaps($this->resultDocuments);
 
-		$currentGeolocation = ($this->keyword != '') ?
-			$this->geoSearchController->getGeolocationAsArray($this->keyword) :
-			$this->geoSearchController->getGeolocationAsArray($countryKeyword);
+		$currentGeoLocation = ($this->keyword != '') ?
+			$this->geoSearchController->getGeoLocationAsArray($this->keyword) :
+			$this->geoSearchController->getGeoLocationAsArray($countryKeyword);
 
 		// general values
-		$this->view->assign('language',$this->defaultLanguage);
-		$this->view->assign('keyword',$this->keyword);
-		$this->view->assign('countryKeyword',$countryKeyword);
+		$this->view->assign('language', $this->defaultLanguage);
+		$this->view->assign('keyword', $this->keyword);
+		$this->view->assign('countryKeyword', $countryKeyword);
 
 		// distance filter
-		$this->view->assign('showDistanceFilter',(($geoSearchObject->isDistanceFilterEnable() && $this->keyword != "") ? true : false));
-		$this->view->assign('distanceFilterContent',array($geoSearchObject->getDistance()));
-		$this->view->assign('configuredDistanceRanges',$geoSearchObject->getConfiguredRanges());
-		$this->view->assign('currentRange',$this->range);
-		$this->view->assign('removeFilterContent',array());
+		$this->view->assign('showDistanceFilter', (($geoSearchObject->isDistanceFilterEnable() && $this->keyword != '') ? true : false));
+		$this->view->assign('distanceFilterContent', array($geoSearchObject->getDistance()));
+		$this->view->assign('configuredDistanceRanges', $geoSearchObject->getConfiguredRanges());
+		$this->view->assign('currentRange', $this->range);
+		$this->view->assign('removeFilterContent', array());
 
 		// results
-		$this->view->assign('resultDocuments',$this->resultDocuments);
-		$this->view->assign('countryFacetResults',$this->countryFacetResults);
-		$this->view->assign('cityFacetResults',$this->cityFacetResults);
+		$this->view->assign('resultDocuments', $this->resultDocuments);
+		$this->view->assign('countryFacetResults', $this->countryFacetResults);
+		$this->view->assign('cityFacetResults', $this->cityFacetResults);
 
-		// google maps
-		$this->view->assign('dataForGoogleMaps',$googleMapsLocations);
-		$this->view->assign('currentGeolocation',$currentGeolocation);
+		// Google maps
+		$this->view->assign('dataForGoogleMaps', $googleMapsLocations);
+		$this->view->assign('currentGeolocation', $currentGeoLocation);
 		$this->view->assign('zoom', (($countryKeyword == '') ? $geoSearchObject->getCityZoom() : $geoSearchObject->getCountryZoom()));
-		$this->view->assign('searchHasResults',$this->geoSearchController->getSearchHasResults());
+		$this->view->assign('searchHasResults', $this->geoSearchController->getSearchHasResults());
 	}
 }
-?>

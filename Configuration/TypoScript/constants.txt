@@ -7,6 +7,7 @@ plugin.tx_solrgeo {
 		# cat=plugin.tx_solrgeo/file; type=string; label=Path to template layouts (FE)
 		layoutRootPath = EXT:solrgeo/Resources/Private/Layouts/
 	}
+
 	persistence {
 		# cat=plugin.tx_solrgeo//a; type=string; label=Default storage PID
 		storagePid =

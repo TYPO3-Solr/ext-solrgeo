@@ -1,29 +1,32 @@
 <?php
 namespace TYPO3\Solrgeo\Controller;
 
-	/***************************************************************
-	 *  Copyright notice
-	 *
-	 *  (c) 2014 Phuong Doan <phuong.doan@dkd.de>, dkd Internet Service GmbH
-	 *
-	 *  All rights reserved
-	 *
-	 *  This script is part of the TYPO3 project. The TYPO3 project is
-	 *  free software; you can redistribute it and/or modify
-	 *  it under the terms of the GNU General Public License as published by
-	 *  the Free Software Foundation; either version 3 of the License, or
-	 *  (at your option) any later version.
-	 *
-	 *  The GNU General Public License can be found at
-	 *  http://www.gnu.org/copyleft/gpl.html.
-	 *
-	 *  This script is distributed in the hope that it will be useful,
-	 *  but WITHOUT ANY WARRANTY; without even the implied warranty of
-	 *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	 *  GNU General Public License for more details.
-	 *
-	 *  This copyright notice MUST APPEAR in all copies of the script!
-	 ***************************************************************/
+/***************************************************************
+ *  Copyright notice
+ *
+ *  (c) 2014 Phuong Doan <phuong.doan@dkd.de>, dkd Internet Service GmbH
+ *
+ *  All rights reserved
+ *
+ *  This script is part of the TYPO3 project. The TYPO3 project is
+ *  free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  The GNU General Public License can be found at
+ *  http://www.gnu.org/copyleft/gpl.html.
+ *
+ *  This script is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  This copyright notice MUST APPEAR in all copies of the script!
+ ***************************************************************/
+
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 
 /**
  *
@@ -35,19 +38,18 @@ namespace TYPO3\Solrgeo\Controller;
 class SolrController {
 
 	/**
-	 * an instance of Tx_solr_Search
+	 * An instance of Tx_Solr_Search
 	 *
-	 * @var \Tx_solr_Search
+	 * @var \Tx_Solr_Search
 	 */
 	protected $search;
 
 	/**
 	 * The plugin's query
 	 *
-	 * @var \Tx_solr_Query
+	 * @var \Tx_Solr_Query
 	 */
 	protected $query = NULL;
-
 
 	/**
 	 * The currently selected Site.
@@ -113,13 +115,19 @@ class SolrController {
 	 */
 	protected $helper = NULL;
 
-	public function __construct(\tx_solr_Site $site) {
+
+	/**
+	 * @param \Tx_Solr_Site $site
+	 */
+	public function __construct(\Tx_Solr_Site $site) {
 		$this->site = $site;
-		$this->connectionManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_solr_ConnectionManager');
-		if(!$this->solrAvailable) {
+		$this->connectionManager = GeneralUtility::makeInstance('tx_solr_ConnectionManager');
+
+		if (!$this->solrAvailable) {
 			$this->initializeConfiguration();
 		}
-		$this->helper = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
+
+		$this->helper = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
 	}
 
 	/**
@@ -128,8 +136,11 @@ class SolrController {
 	 * @return void
 	 */
 	public function initialize() {
-		$this->connectionManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_solr_ConnectionManager');
-		if(!$this->solrAvailable) {
+		// FIXME why is there another initialization besides the constructor?
+		// also doing almost the same??
+		$this->connectionManager = GeneralUtility::makeInstance('tx_solr_ConnectionManager');
+
+		if (!$this->solrAvailable) {
 			$this->initializeConfiguration();
 			$this->initializeSearch($this->site->getRootPageId(), $this->site->getDefaultLanguage());
 		}
@@ -139,14 +150,15 @@ class SolrController {
 	/**
 	 * Initializes the Solr connection and tests the connection through a ping. Also gets all the solr cores.
 	 *
-	 * @param integer A page ID.
-	 * @param integer The language ID to get the configuration for as the path may differ. Optional, defaults to 0.
+	 * @param integer $pageId A page ID.
+	 * @param integer $languageId The language ID to get the configuration for as the path may differ. Optional, defaults to 0.
 	 * @return void
 	 */
 	protected function initializeSearch($pageId = 1, $languageId = 0) {
 		$solr = $this->connectionManager->getConnectionByPageId($pageId,$languageId);
-		$this->search = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('\TYPO3\Solrgeo\Search\GeoSearch', $solr);
-		$this->search->setSolrconnetion($solr);
+		$this->search = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Search\\GeoSearch', $solr);
+		// FIXME must not/should not set the connection this way, check EXT:solr
+		$this->search->setSolrConnection($solr);
 		$this->solrAvailable = $this->search->ping();
 	}
 
@@ -162,7 +174,7 @@ class SolrController {
 	 * Checks whether Solr Document has the given field
 	 *
 	 * @param \Apache_Solr_Document The Solr Document for checking
-	 * @param string The name of the field
+	 * @param string $fieldName The name of the field
 	 * @return boolean
 	 */
 	public function solrDocumentHasFieldByName(\Apache_Solr_Document $solrDocument, $fieldName) {
@@ -170,11 +182,12 @@ class SolrController {
 		$fields   = $solrDocument->getFieldNames();
 
 		foreach ($fields as $field) {
-			if($field == $fieldName) {
+			if ($field == $fieldName) {
 				$hasField = true;
 				break;
 			}
 		}
+
 		return $hasField;
 	}
 
@@ -188,10 +201,12 @@ class SolrController {
 	public function dumpSolrDocument(\Apache_Solr_Document $solrDocument) {
 		$fields   = $solrDocument->getFieldNames();
 		$document = array();
+
 		foreach ($fields as $field) {
 			$fieldValue       = $solrDocument->getField($field);
-			$document[$field] = $fieldValue["value"];
+			$document[$field] = $fieldValue['value'];
 		}
+
 		var_dump($document);
 	}
 
@@ -200,7 +215,7 @@ class SolrController {
 	 *
 	 * @return boolean Returns TRUE on successful ping.
 	 */
-	public function getSolrstatus() {
+	public function getSolrStatus() {
 		return $this->solrAvailable;
 	}
 
@@ -209,14 +224,16 @@ class SolrController {
 	 * Search for Solr Document by given UID of page
 	 *
 	 * @param \Tx_Solr_SolrService
-	 * @param string The type of a solr document
-	 * @param string The uid of the type in TYPO3
+	 * @param string $type The type of a solr document
+	 * @param string $uid The uid of the type in TYPO3
 	 * @return array contains \Apache_Solr_Document
 	 */
 	public function search(\Tx_Solr_SolrService $solrConnection, $type, $uid) {
 		$solrResults = array();
-		$search = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('\TYPO3\Solrgeo\Search\GeoSearch', $solrConnection);
-		$search->setSolrconnetion($solrConnection);
+		$search = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Search\\GeoSearch', $solrConnection);
+		// FIXME must not/should not set the connection this way, check EXT:solr
+		$search->setSolrConnection($solrConnection);
+
 		if ($search->ping()) {
 			$query = $this->getDefaultQuery();
 			$queryUid = ($type == 'tx_solr_file') ? 'fileReferenceUid' : 'uid';
@@ -224,6 +241,7 @@ class SolrController {
 			$search->search($query, 0, NULL);
 			$solrResults = $search->getResultDocuments();
 		}
+
 		return $solrResults;
 	}
 
@@ -233,9 +251,10 @@ class SolrController {
 	 * @return \Tx_solr_Query
 	 */
 	public function getDefaultQuery() {
-		$query = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance('tx_solr_Query', '');
+		$query = GeneralUtility::makeInstance('Tx_Solr_Query', '');
 		$query->setAlternativeQuery('*:*');
 		$query->setSiteHashFilter($this->site->getDomain());
+
 		return $query;
 	}
 }

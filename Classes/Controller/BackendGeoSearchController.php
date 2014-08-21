@@ -25,6 +25,9 @@ namespace TYPO3\Solrgeo\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use TYPO3\Solrgeo\Domain\Model\Location;
+
+
 /**
  *
  *
@@ -37,20 +40,21 @@ class BackendGeoSearchController extends SolrController {
 	/**
 	 * Update the Solr Document with the address and location values
 	 *
-	 * @param string The type (pages, tx_solr_file) or TCA table
-	 * @param integer The UID of the page
-	 * @param \TYPO3\Solrgeo\Domain\Model\Location The Search Object holds the information about address and Geolocation
-	 * @return boolean Returns the Status of Update
+	 * @param string $type The type (pages, tx_solr_file) or TCA table
+	 * @param integer $uid The UID of the page
+	 * @param \TYPO3\Solrgeo\Domain\Model\Location The Search Object holds the information about address and Geo location
+	 * @return boolean Status of Update
 	 */
-	public function updateSolrDocument($type, $uid, \TYPO3\Solrgeo\Domain\Model\Location $locationObject) {
-		$updateSolrDocument = true;
+	public function updateSolrDocument($type, $uid, Location $locationObject) {
+		$solrDocumentUpdated = false;
+		$solrConnections     = $this->connectionManager->getAllConnections();
 
-		$solrConnections = $this->connectionManager->getAllConnections();
 		foreach ($solrConnections as $solrConnection) {
 			$solrResults = $this->search($solrConnection, $type, $uid);
-			if(!empty($solrResults)) {
-				foreach($solrResults as $solrDocument) {
-					if($solrDocument instanceof \Apache_Solr_Document) {
+
+			if (!empty($solrResults)) {
+				foreach ($solrResults as $solrDocument) {
+					if ($solrDocument instanceof \Apache_Solr_Document) {
 
 						// Prepare Solr Document
 						$solrDocument->setField(self::ADDRESS_FIELD, $locationObject->getAddress());
@@ -59,22 +63,22 @@ class BackendGeoSearchController extends SolrController {
 						$solrDocument->setField(self::COUNTRY_FIELD, $locationObject->getCountry());
 						$solrDocument->setField(self::REGION_FIELD, $locationObject->getRegion());
 
-						// Need to unset this field otherwise the copyfield function adds teaser text as multivalue!
+						// Need to unset this field otherwise the copy field function adds teaser text as multivalue!
 						unset($solrDocument->teaser);
-						if(!$this->solrDocumentHasFieldByName($solrDocument, 'appKey')) {
+						if (!$this->solrDocumentHasFieldByName($solrDocument, 'appKey')) {
 							$solrDocument->setField('appKey', 'EXT:solr');
 						}
 
 						// Update the Solr Document
 						$response = $solrConnection->addDocument($solrDocument);
 						if ($response->getHttpStatus() == 200) {
-							$updateSolrDocument = true;
+							$solrDocumentUpdated = true;
 						}
 					}
 				}
 			}
 		}
 
-		return $updateSolrDocument;
+		return $solrDocumentUpdated;
 	}
 }

@@ -11,8 +11,8 @@
  ***************************************************************/
 
 $EM_CONF[$_EXTKEY] = array(
-	'title' => 'solrgeo',
-	'description' => 'EXT:solrgeo is an add-on to EXT:sor to provide the geo search with Apache Solr Spatial Search.',
+	'title' => 'Apache Solr for TYPO3 - Geo Search',
+	'description' => 'EXT:solrgeo is an add-on to EXT:sor to provide geo search with Apache Solr Spatial Search.',
 	'category' => 'plugin',
 	'author' => 'Phuong Doan',
 	'author_email' => 'phuong.doan@dkd.de',
@@ -31,9 +31,10 @@ $EM_CONF[$_EXTKEY] = array(
 	'version' => '1.0.0',
 	'constraints' => array(
 		'depends' => array(
-			'extbase' => '6.0',
-			'fluid' => '6.0',
-			'typo3' => '6.0'
+			'extbase' => '6.0.0',
+			'fluid' => '6.0.0',
+			'solr' => '3.0.0',
+			'typo3' => '6.0.0'
 		),
 		'conflicts' => array(
 		),

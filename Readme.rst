@@ -12,7 +12,7 @@ Requirements
 ------------------------
 
 The add-on solrgeo was tested successfully with this following installations:
-* EXT:solr 3.0.0-dev
+* EXT:solr 3.0.0
 * Solr Server 4.6.1 and 4.7.0
 * TYPO3 6.1.1 and 6.2.0
 
@@ -31,7 +31,7 @@ Features
   ** BuzzHttpAdapter
   ** GuzzleHttpAdapter
   ** ZendHttpAdapter
-  For using Buzz,, Guzzle and Zend please ensure you have installed the respectively libraries
+  For using Buzz,, Guzzle and Zend please ensure you have installed the respective libraries
 * Working this filters for Spatial Search: 
   ** Distance filter: geofilt (for an exact search result)
   ** Bounding-box filter: bbox (loose search)
@@ -47,8 +47,8 @@ Installation
 * Include solrgeo as static template
 * Create a new page which includes solrgeo as plugin
 * Customize TypoScript
-  ** Set the new page id you created before if you will link the solr page to the solrgeo page
-  ** Important is the geocode-part: plugin.tx_solrgeo.index.geocode. Define at first your table (pages, files, tx_solrfile, tx_news_domain_model_news, etc) and within this table you need at least the uid and city. Optional fields are address and geolocation.
+  ** Set the new page id you created before if you are going to link the solr page to the solrgeo page
+  ** Geo Coding: plugin.tx_solrgeo.index.geocode. First configure your tables to geo code (pages, files, tx_solrfile, tx_news_domain_model_news, etc) and within each table configuration you need at least the uid and city. Optional fields are address and geolocation.
   ** All other configuration options are set with default values.
 * Create a scheduler task with solrgeo (class), single (type) and run it.
 * Optional: Customize the results 

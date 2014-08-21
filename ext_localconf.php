@@ -6,11 +6,11 @@ if (!defined('TYPO3_MODE')) {
 }
 
 // Autoload for Geocoder-php Library
-require_once ExtensionManagementUtility::extPath('solrgeo').'Resources/Private/PHP/Geocoder/'.'src/autoload.php';
+require_once ExtensionManagementUtility::extPath('solrgeo').'Resources/Private/PHP/Geocoder/src/autoload.php';
 
 // adding scheduler tasks
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks']['TYPO3\\Solrgeo\\Tasks\\GeoCoderTask'] = array(
-	'extension'        => $_EXTKEY,
+	'extension'        => 'solr',
 	'title'            => 'LLL:EXT:solrgeo/Resources/Private/Language/locallang.xlf:scheduler.title',
 	'description'      => 'LLL:EXT:solrgep/Resources/Private/Language/locallang.xlf:scheduler.description'
 );

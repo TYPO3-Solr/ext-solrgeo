@@ -26,10 +26,10 @@
 				<source>geolocation</source>
 			</trans-unit>
 			<trans-unit id="scheduler.title">
-            	<source>Solr Geo search</source>
+            	<source>Solr Geo Coder</source>
             </trans-unit>
             <trans-unit id="scheduler.description">
-				<source>Updates solr documents with geolocation data</source>
+				<source>Updates solr documents with geo location data</source>
 			</trans-unit>
 		</body>
 	</file>
