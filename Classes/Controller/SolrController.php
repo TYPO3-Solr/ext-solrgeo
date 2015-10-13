@@ -38,16 +38,16 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 class SolrController {
 
 	/**
-	 * An instance of Tx_Solr_Search
+	 * An instance of ApacheSolrForTypo3\Solr\Search
 	 *
-	 * @var \Tx_Solr_Search
+	 * @var \ApacheSolrForTypo3\Solr\Search
 	 */
 	protected $search;
 
 	/**
 	 * The plugin's query
 	 *
-	 * @var \Tx_Solr_Query
+	 * @var \ApacheSolrForTypo3\Solr\Query
 	 */
 	protected $query = NULL;
 
@@ -61,12 +61,12 @@ class SolrController {
 	/**
 	 * A Solr service instance to interact with the Solr server
 	 *
-	 * @var \Tx_Solr_SolrService
+	 * @var \ApacheSolrForTypo3\Solr\SolrService
 	 */
 	protected $solr;
 
 	/**
-	 * @var \Tx_Solr_ConnectionManager
+	 * @var \ApacheSolrForTypo3\Solr\ConnectionManager
 	 */
 	protected $connectionManager;
 
@@ -166,7 +166,7 @@ class SolrController {
 	 * Initializes the Solr configuration using the page uid 1
 	 */
 	protected function initializeConfiguration() {
-		$this->conf = \Tx_Solr_Util::getSolrConfiguration();
+		$this->conf = \ApacheSolrForTypo3\Solr\Util::getSolrConfiguration();
 	}
 
 
@@ -223,12 +223,12 @@ class SolrController {
 	/**
 	 * Search for Solr Document by given UID of page
 	 *
-	 * @param \Tx_Solr_SolrService
+	 * @param \ApacheSolrForTypo3\Solr\SolrService
 	 * @param string $type The type of a solr document
 	 * @param string $uid The uid of the type in TYPO3
 	 * @return array contains \Apache_Solr_Document
 	 */
-	public function search(\Tx_Solr_SolrService $solrConnection, $type, $uid) {
+	public function search(\ApacheSolrForTypo3\Solr\SolrService $solrConnection, $type, $uid) {
 		$solrResults = array();
 		$search = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Search\\GeoSearch', $solrConnection);
 		// FIXME must not/should not set the connection this way, check EXT:solr
@@ -248,10 +248,10 @@ class SolrController {
 	/**
 	 * Get the Query instance with default parameters
 	 *
-	 * @return \Tx_solr_Query
+	 * @return \ApacheSolrForTypo3\Solr\Query
 	 */
 	public function getDefaultQuery() {
-		$query = GeneralUtility::makeInstance('Tx_Solr_Query', '');
+		$query = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solr\\Query', '');
 		$query->setAlternativeQuery('*:*');
 		$query->setSiteHashFilter($this->site->getDomain());
 

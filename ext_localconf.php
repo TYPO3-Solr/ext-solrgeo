@@ -16,7 +16,7 @@ $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks']['TYPO3\\Solrgeo\
 );
 
 // Extending the SortingCommand for "Sort By"-Box
-$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['Tx_Solr_PiResults_SortingCommand'] = array(
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['\ApacheSolrForTypo3\Solr\Plugin\Results\SortingCommand'] = array(
 	'className' => 'TYPO3\\Solrgeo\\Search\\GeoSearchSortingCommand'
 );
 
@@ -26,5 +26,3 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects']['Tx_Solr_PiResults_SortingCommand'
 	array('Search' => 'search'),
 	array('Search' => 'search')
 );
-
-?>

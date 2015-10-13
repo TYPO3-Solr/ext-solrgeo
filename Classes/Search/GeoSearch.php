@@ -32,13 +32,13 @@ namespace TYPO3\Solrgeo\Search;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class GeoSearch extends \Tx_Solr_Search {
+class GeoSearch extends \ApacheSolrForTypo3\Solr\Search {
 
 	/**
 	 * Sets the solr connection to get the correct connection with associated language
 	 * Default it is set with default language => Search implements the Singleton pattern
 	 *
-	 * @param \Tx_Solr_SolrService $solrConnection
+	 * @param \ApacheSolrForTypo3\Solr\SolrService $solrConnection
 	 */
 	public function setSolrConnection($solrConnection) {
 		$this->solr = $solrConnection;

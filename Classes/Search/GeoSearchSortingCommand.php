@@ -33,7 +33,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  *
  */
-class GeoSearchSortingCommand extends \Tx_Solr_PiResults_SortingCommand {
+class GeoSearchSortingCommand extends \ApacheSolrForTypo3\Solr\Plugin\Results\SortingCommand {
 
 	/**
 	 * Manipulates the Sort-By Links

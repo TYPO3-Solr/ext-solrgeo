@@ -51,7 +51,7 @@ class Helper {
 	/**
 	 * The search query
 	 *
-	 * @var \Tx_Solr_Query
+	 * @var \ApacheSolrForTypo3\Solr\Query
 	 */
 	protected $query = NULL;
 
@@ -132,14 +132,14 @@ class Helper {
 	}
 
 	/**
-	 * @param \Tx_Solr_Query $query
+	 * @param \ApacheSolrForTypo3\Solr\Query $query
 	 */
-	public function setQuery(\Tx_Solr_Query $query) {
+	public function setQuery(\ApacheSolrForTypo3\Solr\Query $query) {
 		$this->query = $query;
 	}
 
 	/**
-	 * @return \Tx_Solr_Query
+	 * @return \ApacheSolrForTypo3\Solr\Query
 	 */
 	public function getQuery() {
 		return $this->query;

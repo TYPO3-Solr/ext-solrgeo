@@ -260,7 +260,7 @@ class FrontendGeoSearchController extends SolrController {
 					}
 
 					// modify results for FE
-					$cropViewHelper = GeneralUtility::makeInstance('Tx_Solr_ViewHelper_Crop');
+					$cropViewHelper = GeneralUtility::makeInstance('ApacheSolrForTypo3\Solr\ViewHelper\Crop');
 					$cropMaxLength  = (isset($settings['search.']['results.']['crop.']['maxLength'])) ?  $settings['search.']['results.']['crop.']['maxLength'] : 200;
 					$cropIndicator  = (isset($settings['search.']['results.']['crop.']['indicator'])) ?  $settings['search.']['results.']['crop.']['indicator'] : '...';
 					$cropFullWords  = (isset($settings['search.']['results.']['crop.']['fullWords'])) ?  $settings['search.']['results.']['crop.']['fullWords'] : 1;
@@ -297,14 +297,14 @@ class FrontendGeoSearchController extends SolrController {
 	/**
 	 * Modifies the Query depends on keyword, range or distance
 	 *
-	 * @param \Tx_solr_Query $query
+	 * @param \ApacheSolrForTypo3\Solr\Query $query
 	 * @param string $keyword
 	 * @param string $geoLocation
 	 * @param string $distance
 	 * @param string $range
-	 * @return \Tx_solr_Query
+	 * @return \ApacheSolrForTypo3\Solr\Query
 	 */
-	public function modifyQuery(\Tx_solr_Query $query, $keyword, $geoLocation, $distance, $range) {
+	public function modifyQuery(\ApacheSolrForTypo3\Solr\Query $query, $keyword, $geoLocation, $distance, $range) {
 		if (GeneralUtility::isFirstPartOfStr($keyword, 'country,')) {
 			$this->geoSearchObject->setSearchByCountry(true);
 			$keyword = str_replace('country,', '', $keyword);
