@@ -49,7 +49,7 @@ class ResultLinkViewHelper extends AbstractViewHelper{
 	 */
 	public function render($array, $keyword, $linkType = NULL, $languageId = NULL) {
 		$link = '';
-		$cObj = GeneralUtility::makeInstance('tslib_cObj');
+		$cObj = GeneralUtility::makeInstance('TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer');
 
 		if (!empty($array)) {
 		// FIXME FUCKING use a switch/case

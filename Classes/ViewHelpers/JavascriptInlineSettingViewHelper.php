@@ -45,7 +45,7 @@ class JavascriptInlineSettingViewHelper extends AbstractViewHelper{
 	 * @return void
 	 */
 	public function render($namespace, $key = NULL, $value = NULL, array $array = NULL, $addNamespace = TRUE) {
-		/* @var $pageRenderer \t3lib_PageRenderer */
+		/* @var $pageRenderer \TYPO3\CMS\Core\Page\PageRenderer */
 		$pageRenderer = $GLOBALS['TSFE']->getPageRenderer();
 
 		if ($addNamespace) {

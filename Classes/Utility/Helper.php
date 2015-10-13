@@ -86,9 +86,9 @@ class Helper {
 	 *
 	 */
 	protected function initializeDomain() {
-		$sys_page = GeneralUtility::makeInstance('t3lib_pageSelect');
+		$sys_page = GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\Page\\PageRepository');
 		$rootLine = $sys_page->getRootLine($GLOBALS['TSFE']->id);
-		$sys_befunc = GeneralUtility::makeInstance('t3lib_BEfunc');
+		$sys_befunc = GeneralUtility::makeInstance('TYPO3\\CMS\\Backend\\Utility\\BackendUtility');
 
 		$this->domain = $sys_befunc->firstDomainRecord($rootLine);
 	}

@@ -59,7 +59,7 @@ class GeoSearchSortingCommand extends \ApacheSolrForTypo3\Solr\Plugin\Results\So
 							'parameter'        => $settings['search.']['targetPageId'],
 							'additionalParams' => '&tx_solrgeo_search[q]='.$query->getKeywordsRaw()
 						);
-						$cObj= GeneralUtility::makeInstance('tslib_cObj');
+						$cObj= GeneralUtility::makeInstance('TYPO3\\CMS\\Frontend\\ContentObject\\ContentObjectRenderer');
 						$tmp['link'] = $cObj->typoLink($tmp['label'], $linkConfiguration);
 						$sortOptions[] = $tmp;
 					}
