@@ -1,12 +1,11 @@
 <?php
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 if (!defined('TYPO3_MODE')) {
 	die ('Access denied.');
 }
 
 // Autoload for Geocoder-php Library
-require_once ExtensionManagementUtility::extPath('solrgeo').'Resources/Private/PHP/Geocoder/src/autoload.php';
+require_once \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('solrgeo').'Resources/Private/PHP/Geocoder/src/autoload.php';
 
 // adding scheduler tasks
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks']['TYPO3\\Solrgeo\\Tasks\\GeoCoderTask'] = array(
