@@ -543,4 +543,4 @@ class FrontendGeoSearchController extends SolrController {
 	}
 
 }
-?>
+

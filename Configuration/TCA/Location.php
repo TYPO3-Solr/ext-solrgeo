@@ -151,4 +151,3 @@ $TCA['tx_solrgeo_domain_model_location'] = array(
 	),
 );
 
-?>
