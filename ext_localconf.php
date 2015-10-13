@@ -12,7 +12,7 @@ require_once ExtensionManagementUtility::extPath('solrgeo').'Resources/Private/P
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['scheduler']['tasks']['TYPO3\\Solrgeo\\Tasks\\GeoCoderTask'] = array(
 	'extension'        => 'solr',
 	'title'            => 'LLL:EXT:solrgeo/Resources/Private/Language/locallang.xlf:scheduler.title',
-	'description'      => 'LLL:EXT:solrgep/Resources/Private/Language/locallang.xlf:scheduler.description'
+	'description'      => 'LLL:EXT:solrgeo/Resources/Private/Language/locallang.xlf:scheduler.description'
 );
 
 // Extending the SortingCommand for "Sort By"-Box
