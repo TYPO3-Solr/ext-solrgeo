@@ -25,6 +25,7 @@ namespace ApacheSolrForTypo3\Solrgeo\Configuration;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use ApacheSolrForTypo3\Solr\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
@@ -47,7 +48,7 @@ class IndexConfigurator {
 	const DEFAULT_PROVIDER = 'GoogleMapsProvider';
 
 	/**
-	 * @var \Tx_Solr_Site
+	 * @var Site
 	 */
 	protected $site;
 
@@ -94,9 +95,9 @@ class IndexConfigurator {
 
 
 	/**
-	 * @param \Tx_Solr_Site $site
+	 * @param Site $site
 	 */
-	public function __construct(\Tx_Solr_Site $site) {
+	public function __construct(Site $site) {
 		$this->site = $site;
 		$this->initializeAdapter();
 		$this->initializeProvider();
