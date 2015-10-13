@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Controller;
+namespace ApacheSolrForTypo3\Solrgeo\Controller;
 
 /***************************************************************
  *  Copyright notice
@@ -27,7 +27,6 @@ namespace TYPO3\Solrgeo\Controller;
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\Solrgeo\Controller\FrontendGeoSearchController;
 
 
 /**
@@ -45,7 +44,7 @@ class SearchController extends ActionController {
 	protected $geoSearchController;
 
 	/**
-	 * @var \TYPO3\Solrgeo\Utility\Helper
+	 * @var \ApacheSolrForTypo3\Solrgeo\Utility\Helper
 	 */
 	protected $helper;
 
@@ -108,9 +107,9 @@ class SearchController extends ActionController {
 	* Initializes Solr
 	*/
 	protected function initializeSolr() {
-		$this->helper = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
+		$this->helper = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solrgeo\\Utility\\Helper');
 		$this->geoSearchController = GeneralUtility::makeInstance(
-			'TYPO3\\Solrgeo\\Controller\\FrontendGeoSearchController',
+			'ApacheSolrForTypo3\\Solrgeo\\Controller\\FrontendGeoSearchController',
 			$this->helper->getSolrSite()
 		);
 		$this->geoSearchController->initializeGeoSearchConfiguration();

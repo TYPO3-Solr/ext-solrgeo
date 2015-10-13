@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Controller;
+namespace ApacheSolrForTypo3\Solrgeo\Controller;
 
 /***************************************************************
  *  Copyright notice
@@ -25,7 +25,7 @@ namespace TYPO3\Solrgeo\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
-use TYPO3\Solrgeo\Domain\Model\Location;
+use ApacheSolrForTypo3\Solrgeo\Domain\Model\Location;
 
 
 /**
@@ -42,7 +42,7 @@ class BackendGeoSearchController extends SolrController {
 	 *
 	 * @param string $type The type (pages, tx_solr_file) or TCA table
 	 * @param integer $uid The UID of the page
-	 * @param \TYPO3\Solrgeo\Domain\Model\Location The Search Object holds the information about address and Geo location
+	 * @param \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location The Search Object holds the information about address and Geo location
 	 * @return boolean Status of Update
 	 */
 	public function updateSolrDocument($type, $uid, Location $locationObject) {

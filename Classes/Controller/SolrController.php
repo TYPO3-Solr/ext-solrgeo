@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Controller;
+namespace ApacheSolrForTypo3\Solrgeo\Controller;
 
 /***************************************************************
  *  Copyright notice
@@ -25,6 +25,8 @@ namespace TYPO3\Solrgeo\Controller;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use ApacheSolrForTypo3\Solr\Site;
+use ApacheSolrForTypo3\Solr\Util;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 
@@ -54,7 +56,7 @@ class SolrController {
 	/**
 	 * The currently selected Site.
 	 *
-	 * @var \Tx_Solr_Site
+	 * @var Site
 	 */
 	protected $site;
 
@@ -111,23 +113,23 @@ class SolrController {
 	protected $solrAvailable = false;
 
 	/**
-	 * @var \TYPO3\Solrgeo\Utility\Helper
+	 * @var \ApacheSolrForTypo3\Solrgeo\Utility\Helper
 	 */
 	protected $helper = NULL;
 
 
 	/**
-	 * @param \Tx_Solr_Site $site
+	 * @param Site $site
 	 */
-	public function __construct(\Tx_Solr_Site $site) {
+	public function __construct(Site $site) {
 		$this->site = $site;
-		$this->connectionManager = GeneralUtility::makeInstance('tx_solr_ConnectionManager');
+		$this->connectionManager = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solr\\ConnectionManager');
 
 		if (!$this->solrAvailable) {
 			$this->initializeConfiguration();
 		}
 
-		$this->helper = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
+		$this->helper = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solrgeo\\Utility\\Helper');
 	}
 
 	/**
@@ -138,7 +140,7 @@ class SolrController {
 	public function initialize() {
 		// FIXME why is there another initialization besides the constructor?
 		// also doing almost the same??
-		$this->connectionManager = GeneralUtility::makeInstance('tx_solr_ConnectionManager');
+		$this->connectionManager = GeneralUtility::makeInstance('ApacheSolrForTypo3\Solr\ConnectionManager');
 
 		if (!$this->solrAvailable) {
 			$this->initializeConfiguration();
@@ -156,7 +158,7 @@ class SolrController {
 	 */
 	protected function initializeSearch($pageId = 1, $languageId = 0) {
 		$solr = $this->connectionManager->getConnectionByPageId($pageId,$languageId);
-		$this->search = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Search\\GeoSearch', $solr);
+		$this->search = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solrgeo\\Search\\GeoSearch', $solr);
 		// FIXME must not/should not set the connection this way, check EXT:solr
 		$this->search->setSolrConnection($solr);
 		$this->solrAvailable = $this->search->ping();
@@ -166,7 +168,7 @@ class SolrController {
 	 * Initializes the Solr configuration using the page uid 1
 	 */
 	protected function initializeConfiguration() {
-		$this->conf = \ApacheSolrForTypo3\Solr\Util::getSolrConfiguration();
+		$this->conf = Util::getSolrConfiguration();
 	}
 
 
@@ -230,7 +232,7 @@ class SolrController {
 	 */
 	public function search(\ApacheSolrForTypo3\Solr\SolrService $solrConnection, $type, $uid) {
 		$solrResults = array();
-		$search = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Search\\GeoSearch', $solrConnection);
+		$search = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solrgeo\\Search\\GeoSearch', $solrConnection);
 		// FIXME must not/should not set the connection this way, check EXT:solr
 		$search->setSolrConnection($solrConnection);
 

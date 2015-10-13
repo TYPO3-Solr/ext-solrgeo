@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Tests;
+namespace ApacheSolrForTypo3\Solrgeo\Tests;
 /***************************************************************
  *  Copyright notice
  *
@@ -43,7 +43,7 @@ class LocationControllerTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase 
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new \TYPO3\Solrgeo\Domain\Model\Location();
+		$this->fixture = new \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location();
 	}
 
 	public function tearDown() {

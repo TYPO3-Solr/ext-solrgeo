@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Domain\Model;
+namespace ApacheSolrForTypo3\Solrgeo\Domain\Model;
 
 /***************************************************************
  *  Copyright notice

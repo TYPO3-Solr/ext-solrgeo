@@ -1,6 +1,6 @@
 <?php
 
-namespace TYPO3\Solrgeo\Tests;
+namespace ApacheSolrForTypo3\Solrgeo\Tests;
 /***************************************************************
  *  Copyright notice
  *
@@ -26,7 +26,7 @@ namespace TYPO3\Solrgeo\Tests;
  ***************************************************************/
 
 /**
- * Test case for class \TYPO3\Solrgeo\Domain\Model\Location.
+ * Test case for class \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location.
  *
  * @version $Id$
  * @copyright Copyright belongs to the respective authors
@@ -39,12 +39,12 @@ namespace TYPO3\Solrgeo\Tests;
  */
 class LocationTest extends \TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase {
 	/**
-	 * @var \TYPO3\Solrgeo\Domain\Model\Location
+	 * @var \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location
 	 */
 	protected $fixture;
 
 	public function setUp() {
-		$this->fixture = new \TYPO3\Solrgeo\Domain\Model\Location();
+		$this->fixture = new \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location();
 	}
 
 	public function tearDown() {

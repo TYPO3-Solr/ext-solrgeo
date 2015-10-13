@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Utility;
+namespace ApacheSolrForTypo3\Solrgeo\Utility;
 
 /***************************************************************
  *  Copyright notice

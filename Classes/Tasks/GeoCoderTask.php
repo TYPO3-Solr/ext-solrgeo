@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Tasks;
+namespace ApacheSolrForTypo3\Solrgeo\Tasks;
 
 /***************************************************************
  *  Copyright notice
@@ -47,8 +47,8 @@ class GeoCoderTask extends AbstractTask {
 	 * @return boolean Returns TRUE on successful execution, FALSE on error
 	 */
 	public function execute() {
-		/** @var $helper \TYPO3\Solrgeo\Utility\Helper */
-		$helper = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
+		/** @var $helper \ApacheSolrForTypo3\Solrgeo\Utility\Helper */
+		$helper = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solrgeo\\Utility\\Helper');
 		$geoCoder = $helper->getGeoCoder();
 		$geoCoder->processGeoCoding($helper->getSolrSite());
 

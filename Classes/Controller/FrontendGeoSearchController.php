@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Controller;
+namespace ApacheSolrForTypo3\Solrgeo\Controller;
 
 /***************************************************************
  *  Copyright notice
@@ -26,7 +26,7 @@ namespace TYPO3\Solrgeo\Controller;
  ***************************************************************/
 
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\Solrgeo\Utility\String;
+use ApacheSolrForTypo3\Solrgeo\Utility\String;
 
 
 /**
@@ -38,7 +38,7 @@ use TYPO3\Solrgeo\Utility\String;
 class FrontendGeoSearchController extends SolrController {
 
 	/**
-	 * @var \TYPO3\Solrgeo\Configuration\GeoSearchConfiguration
+	 * @var \ApacheSolrForTypo3\Solrgeo\Configuration\GeoSearchConfiguration
 	 */
 	protected $geoSearchObject = null;
 
@@ -53,13 +53,13 @@ class FrontendGeoSearchController extends SolrController {
 	protected $searchHasResults = false;
 
 	/**
-	 * @var \TYPO3\Solrgeo\Utility\Helper
+	 * @var \ApacheSolrForTypo3\Solrgeo\Utility\Helper
 	 */
 	protected $helper;
 
 
 	/**
-	 * @param \TYPO3\Solrgeo\Utility\Helper $helper
+	 * @param \ApacheSolrForTypo3\Solrgeo\Utility\Helper $helper
 	 */
 	public function setHelper($helper) {
 		$this->helper = $helper;
@@ -70,14 +70,14 @@ class FrontendGeoSearchController extends SolrController {
 	}
 
 	/**
-	 * @param \TYPO3\Solrgeo\Configuration\GeoSearchConfiguration $geoSearchObject
+	 * @param \ApacheSolrForTypo3\Solrgeo\Configuration\GeoSearchConfiguration $geoSearchObject
 	 */
 	public function setGeoSearchObject($geoSearchObject) {
 		$this->geoSearchObject = $geoSearchObject;
 	}
 
 	/**
-	 * @return \TYPO3\Solrgeo\Configuration\GeoSearchConfiguration
+	 * @return \ApacheSolrForTypo3\Solrgeo\Configuration\GeoSearchConfiguration
 	 */
 	public function getGeoSearchObject() {
 		return $this->geoSearchObject;
@@ -122,7 +122,7 @@ class FrontendGeoSearchController extends SolrController {
 	 * @return void
 	 */
 	protected function createGeoSearchObject() {
-		$this->geoSearchObject = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Configuration\\GeoSearchConfiguration');
+		$this->geoSearchObject = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solrgeo\\Configuration\\GeoSearchConfiguration');
 		$configuration         = $this->helper->getConfiguration('tx_solrgeo');
 		$searchConf            = $configuration['search.'];
 

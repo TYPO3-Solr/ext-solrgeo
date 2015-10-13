@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Search;
+namespace ApacheSolrForTypo3\Solrgeo\Search;
 
 /***************************************************************
  *  Copyright notice
@@ -41,7 +41,7 @@ class GeoSearchSortingCommand extends \ApacheSolrForTypo3\Solr\Plugin\Results\So
 	 * @return array
 	 */
 	protected function getSortingLinks() {
-		$helper = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Utility\\Helper');
+		$helper = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solrgeo\\Utility\\Helper');
 		$settings = $helper->getConfiguration('tx_solrgeo');
 
 		$sortOptions = parent::getSortingLinks();

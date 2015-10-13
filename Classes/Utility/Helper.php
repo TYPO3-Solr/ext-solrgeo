@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Utility;
+namespace ApacheSolrForTypo3\Solrgeo\Utility;
 
 /***************************************************************
  *  Copyright notice
@@ -25,6 +25,8 @@ namespace TYPO3\Solrgeo\Utility;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use ApacheSolrForTypo3\Solr\Query;
+use ApacheSolrForTypo3\Solr\Site;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 
@@ -51,19 +53,19 @@ class Helper {
 	/**
 	 * The search query
 	 *
-	 * @var \ApacheSolrForTypo3\Solr\Query
+	 * @var Query
 	 */
 	protected $query = NULL;
 
 	/**
 	 * The Site
 	 *
-	 * @var \Tx_Solr_Site
+	 * @var Site
 	 */
 	protected $site = NULL;
 
 	/**
-	 * @var \TYPO3\Solrgeo\Service\GeoCoderService
+	 * @var \ApacheSolrForTypo3\Solrgeo\Service\GeoCoderService
 	 */
 	protected $geocoder = NULL;
 
@@ -132,14 +134,14 @@ class Helper {
 	}
 
 	/**
-	 * @param \ApacheSolrForTypo3\Solr\Query $query
+	 * @param Query $query
 	 */
-	public function setQuery(\ApacheSolrForTypo3\Solr\Query $query) {
+	public function setQuery(Query $query) {
 		$this->query = $query;
 	}
 
 	/**
-	 * @return \ApacheSolrForTypo3\Solr\Query
+	 * @return Query
 	 */
 	public function getQuery() {
 		return $this->query;
@@ -149,14 +151,14 @@ class Helper {
 	 * Sets the Solr Site
 	 */
 	protected function initializeSolrSite() {
-		$sites = \Tx_solr_Site::getAvailableSites();
+		$sites = Site::getAvailableSites();
 		$site = array_shift($sites);
 
 		$this->site = $site;
 	}
 
 	/**
-	 * @return \Tx_Solr_Site
+	 * @return Site
 	 */
 	public function getSolrSite() {
 		return $this->site;
@@ -167,7 +169,7 @@ class Helper {
 	 */
 	protected function initializeGeoCoderService() {
 		$solrGeoConfig = GeneralUtility::makeInstance(
-			'TYPO3\\Solrgeo\\Configuration\\IndexConfigurator',
+			'ApacheSolrForTypo3\\Solrgeo\\Configuration\\IndexConfigurator',
 			$this->getSolrSite()
 		);
 		$solrGeoConfig->setConfiguration($this->getConfiguration('tx_solrgeo'));
@@ -176,7 +178,7 @@ class Helper {
 		$this->locationCount = count($solrGeoConfig->getLocationList());
 
 		$geoCoder = GeneralUtility::makeInstance(
-			'TYPO3\\Solrgeo\\Service\\GeoCoderService',
+			'ApacheSolrForTypo3\\Solrgeo\\Service\\GeoCoderService',
 			$solrGeoConfig->getProvider()
 		);
 		$geoCoder->setLocationList($solrGeoConfig->getLocationList());
@@ -186,7 +188,7 @@ class Helper {
 
 	/**
 	 *
-	 * @return \TYPO3\Solrgeo\Service\GeoCoderService
+	 * @return \ApacheSolrForTypo3\Solrgeo\Service\GeoCoderService
 	 */
 	public function getGeoCoder() {
 		return $this->geocoder;

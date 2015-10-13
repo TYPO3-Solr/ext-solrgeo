@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\ViewHelpers;
+namespace ApacheSolrForTypo3\Solrgeo\ViewHelpers;
 
 /***************************************************************
  *  Copyright notice

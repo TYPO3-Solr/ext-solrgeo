@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Service;
+namespace ApacheSolrForTypo3\Solrgeo\Service;
 
 /***************************************************************
  *  Copyright notice
@@ -25,12 +25,13 @@ namespace TYPO3\Solrgeo\Service;
  *  This copyright notice MUST APPEAR in all copies of the script!
  ***************************************************************/
 
+use ApacheSolrForTypo3\Solr\Site;
 use Geocoder\Exception\ExceptionInterface;
 use Geocoder\Geocoder;
 use Geocoder\Provider\ProviderInterface;
 use Geocoder\Result\ResultFactoryInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\Solrgeo\Domain\Model\Location;
+use ApacheSolrForTypo3\Solrgeo\Domain\Model\Location;
 
 
 /**
@@ -79,15 +80,15 @@ class GeoCoderService extends Geocoder{
 	}
 
 	/**
-	 * @param \Tx_Solr_Site $site
+	 * @param Site $site
 	 * @throws \RuntimeException
 	 */
-	public function processGeoCoding(\Tx_Solr_Site $site) {
+	public function processGeoCoding(Site $site) {
 		if(!empty($this->locationList)) {
 			/** @var $objectManager \TYPO3\CMS\Extbase\Object\ObjectManager */
 			$objectManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Object\\ObjectManager');
-			/** @var $locationRepository \TYPO3\Solrgeo\Domain\Repository\LocationRepository' */
-			$locationRepository = $objectManager->get('TYPO3\\Solrgeo\\Domain\\Repository\\LocationRepository');
+			/** @var $locationRepository \ApacheSolrForTypo3\Solrgeo\Domain\Repository\LocationRepository' */
+			$locationRepository = $objectManager->get('ApacheSolrForTypo3\\Solrgeo\\Domain\\Repository\\LocationRepository');
 			$locationRepository->initializeObject();
 			$persistenceManager = GeneralUtility::makeInstance('TYPO3\\CMS\\Extbase\\Persistence\\Generic\\PersistenceManager');
 
@@ -123,7 +124,7 @@ class GeoCoderService extends Geocoder{
 				}
 
 				if($locationObject != null) {
-					$solrController = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Controller\\BackendGeoSearchController', $site);
+					$solrController = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solrgeo\\Controller\\BackendGeoSearchController', $site);
 					$updateStatus = $solrController->updateSolrDocument($location['type'], $location['uid'], $locationObject);
 
 					if (!$updateStatus) {
@@ -140,9 +141,9 @@ class GeoCoderService extends Geocoder{
 
 	/**
 	 *
-	 * @param \TYPO3\Solrgeo\Domain\Model\Location $locationObject
+	 * @param \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location $locationObject
 	 * @param string $geoLocation
-	 * @return \TYPO3\Solrgeo\Domain\Model\Location
+	 * @return \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location
 	 */
 	public function fillLocation(Location $locationObject, $geoLocation) {
 		$locationObject->setGeolocation($geoLocation);

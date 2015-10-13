@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Domain\Repository;
+namespace ApacheSolrForTypo3\Solrgeo\Domain\Repository;
 
 /***************************************************************
  *  Copyright notice
@@ -93,10 +93,10 @@ class LocationRepository extends Repository {
 	 * Creates new location instance
 	 *
 	 * @param array $location
-	 * @return \TYPO3\Solrgeo\Domain\Model\Location
+	 * @return \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location
 	 */
 	public function createLocation($location) {
-		$locationObject = GeneralUtility::makeInstance('TYPO3\\Solrgeo\\Domain\\Model\\Location');
+		$locationObject = GeneralUtility::makeInstance('ApacheSolrForTypo3\\Solrgeo\\Domain\\Model\\Location');
 		$locationObject->setPid($location['uid']);
 		$locationObject->setAddress($location['address']);
 		$locationObject->setZip($location['zip']);

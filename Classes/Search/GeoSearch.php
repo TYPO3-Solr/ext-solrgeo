@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Search;
+namespace ApacheSolrForTypo3\Solrgeo\Search;
 
 /***************************************************************
  *  Copyright notice

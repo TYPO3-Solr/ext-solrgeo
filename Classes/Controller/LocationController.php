@@ -1,5 +1,5 @@
 <?php
-namespace TYPO3\Solrgeo\Controller;
+namespace ApacheSolrForTypo3\Solrgeo\Controller;
 
 /***************************************************************
  *  Copyright notice
@@ -26,7 +26,7 @@ namespace TYPO3\Solrgeo\Controller;
  ***************************************************************/
 
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
-use TYPO3\Solrgeo\Domain\Model\Location;
+use ApacheSolrForTypo3\Solrgeo\Domain\Model\Location;
 
 
 /**
@@ -41,7 +41,7 @@ class LocationController extends ActionController {
 	/**
 	 * locationRepository
 	 *
-	 * @var \TYPO3\Solrgeo\Domain\Repository\LocationRepository
+	 * @var \ApacheSolrForTypo3\Solrgeo\Domain\Repository\LocationRepository
 	 * @inject
 	 */
 	protected $locationRepository;
@@ -60,7 +60,7 @@ class LocationController extends ActionController {
 	/**
 	 * Show action
 	 *
-	 * @param \TYPO3\Solrgeo\Domain\Model\Location $location
+	 * @param \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location $location
 	 * @return void
 	 */
 	public function showAction(Location $location) {
@@ -70,7 +70,7 @@ class LocationController extends ActionController {
 	/**
 	 * New action
 	 *
-	 * @param \TYPO3\Solrgeo\Domain\Model\Location $newLocation
+	 * @param \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location $newLocation
 	 * @dontvalidate $newLocation
 	 * @return void
 	 */
@@ -81,7 +81,7 @@ class LocationController extends ActionController {
 	/**
 	 * Create action
 	 *
-	 * @param \TYPO3\Solrgeo\Domain\Model\Location $newLocation
+	 * @param \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location $newLocation
 	 * @return void
 	 */
 	public function createAction(Location $newLocation) {
@@ -93,7 +93,7 @@ class LocationController extends ActionController {
 	/**
 	 * Edit action
 	 *
-	 * @param \TYPO3\Solrgeo\Domain\Model\Location $location
+	 * @param \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location $location
 	 * @return void
 	 */
 	public function editAction(Location $location) {
@@ -103,7 +103,7 @@ class LocationController extends ActionController {
 	/**
 	 * Update action
 	 *
-	 * @param \TYPO3\Solrgeo\Domain\Model\Location $location
+	 * @param \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location $location
 	 * @return void
 	 */
 	public function updateAction(Location $location) {
@@ -115,7 +115,7 @@ class LocationController extends ActionController {
 	/**
 	 * Delete action
 	 *
-	 * @param \TYPO3\Solrgeo\Domain\Model\Location $location
+	 * @param \ApacheSolrForTypo3\Solrgeo\Domain\Model\Location $location
 	 * @return void
 	 */
 	public function deleteAction(Location $location) {
